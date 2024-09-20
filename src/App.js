@@ -1,24 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { ChakraProvider, Box, VStack, Heading } from "@chakra-ui/react";
+import MealPlanner from './MealPlanner';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+      <Box backgroundColor="#F0F4F8" minHeight="100vh" padding={8}>
+        <VStack spacing={8} align="stretch" maxWidth="1200px" margin="auto">
+          <Heading as="h1" size="2xl" textAlign="center" color="#2C3E50">
+            Meal Planner Application
+          </Heading>
+          <MealPlanner />
+        </VStack>
+      </Box>
+    </ChakraProvider>
   );
 }
 
