@@ -56,6 +56,18 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
     [handleInputChange]
   );
 
+  const weightInputRef = useCallback((node) => {
+    if (node !== null) {
+      node.focus();
+    }
+  }, []);
+
+  const heightInputRef = useCallback((node) => {
+    if (node !== null) {
+      node.focus();
+    }
+  }, []);
+
   const handleSubmit = () => {
     onGenerateMealPlan(preferences);
   };
@@ -87,6 +99,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       component: (
         <FormControl isRequired>
           <Input
+            ref={weightInputRef}
             value={weightInput}
             onChange={handleWeightChange}
             placeholder="Enter weight"
@@ -101,6 +114,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       component: (
         <FormControl isRequired>
           <Input
+            ref={heightInputRef}
             value={heightInput}
             onChange={handleHeightChange}
             placeholder="Enter height"
@@ -139,7 +153,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       )
     },
     {
-      title: "Exercise Frequency per Week",
+      title: "Exercise Frequency per Week", // Renamed Question
       icon: FaDumbbell,
       component: (
         <FormControl isRequired>
@@ -190,7 +204,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       )
     },
     {
-      title: "Number of Meals per Day",
+      title: "Number of Meals per Day", // Renamed Question
       icon: FaBalanceScale,
       component: (
         <FormControl isRequired>
@@ -220,7 +234,10 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       icon: FaUtensils,
       component: (
         <FormControl>
-          <CheckboxGroup value={preferences.cuisinePreferences} onChange={(values) => handleInputChange('cuisinePreferences', values)}>
+          <CheckboxGroup
+            value={preferences.cuisinePreferences}
+            onChange={(values) => handleInputChange('cuisinePreferences', values)}
+          >
             <SimpleGrid columns={2} spacing={2}>
               <Checkbox value="mexican">Mexican</Checkbox>
               <Checkbox value="italian">Italian</Checkbox>
