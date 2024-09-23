@@ -1,12 +1,16 @@
+// generateMealPlan.js
 import foodDatabase from './foodDatabase';
 
-const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay) => {
+const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFoodSources) => {
   const meals = [];
   let dailyMacros = { calories: 0, protein: 0, fat: 0, carbs: 0 };
 
+  // Filter foods by selected sources
+  const filteredFoodDatabase = foodDatabase.filter(food => selectedFoodSources.includes(food.source));
+
   // Group foods by source
   const foodsBySource = {};
-  foodDatabase.forEach(food => {
+  filteredFoodDatabase.forEach(food => {
     if (!foodsBySource[food.source]) {
       foodsBySource[food.source] = [];
     }

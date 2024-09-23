@@ -7,7 +7,13 @@ const combinedFoodDatabase = [
     fat: 16,
     carbs: 45,
     protein: 27,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Buffalo Sauce", "Bread", "Cheese", "Lettuce"]
   },
   {
     name: "Buffalo Chicken Melt",
@@ -16,7 +22,13 @@ const combinedFoodDatabase = [
     fat: 23,
     carbs: 45,
     protein: 31,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Buffalo Sauce", "Bread", "Cheese", "Lettuce"]
   },
   {
     name: "Chicken & Bacon Ranch",
@@ -25,7 +37,13 @@ const combinedFoodDatabase = [
     fat: 29,
     carbs: 44,
     protein: 35,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Bacon", "Ranch Sauce", "Bread", "Cheese"]
   },
   {
     name: "Chicken & Bacon Ranch Melt",
@@ -34,7 +52,13 @@ const combinedFoodDatabase = [
     fat: 32,
     carbs: 43,
     protein: 39,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Bacon", "Ranch Sauce", "Bread", "Cheese"]
   },
   {
     name: "Chicken Mango Curry",
@@ -43,7 +67,13 @@ const combinedFoodDatabase = [
     fat: 7,
     carbs: 48,
     protein: 25,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "Asian",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Mango", "Curry Sauce", "Bread", "Lettuce"]
   },
   {
     name: "Chicken Tikka",
@@ -52,7 +82,13 @@ const combinedFoodDatabase = [
     fat: 5,
     carbs: 44,
     protein: 25,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "Asian",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Tikka Sauce", "Bread", "Lettuce", "Tomato"]
   },
   {
     name: "Chicken Vindaloo",
@@ -61,7 +97,13 @@ const combinedFoodDatabase = [
     fat: 9,
     carbs: 46,
     protein: 25,
-    source: "Subway"
+    source: "Subway",
+    cuisine: "Asian",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Vindaloo Sauce", "Bread", "Lettuce", "Tomato"]
   },
   // Add the rest of the Subway items here...
   
@@ -73,7 +115,13 @@ const combinedFoodDatabase = [
     fat: 17.5,
     carbs: 40,
     protein: 50,
-    source: "Chipotle"
+    source: "Chipotle",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Chicken", "Rice", "Beans", "Salsa", "Lettuce"]
   },
   {
     name: "Steak Burrito Bowl",
@@ -82,7 +130,13 @@ const combinedFoodDatabase = [
     fat: 16.5,
     carbs: 41,
     protein: 39,
-    source: "Chipotle"
+    source: "Chipotle",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Steak", "Rice", "Beans", "Salsa", "Lettuce"]
   },
   {
     name: "Barbacoa Burrito Bowl",
@@ -91,7 +145,13 @@ const combinedFoodDatabase = [
     fat: 17.5,
     carbs: 42,
     protein: 42,
-    source: "Chipotle"
+    source: "Chipotle",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Barbacoa", "Rice", "Beans", "Salsa", "Lettuce"]
   },
   {
     name: "Low Carb Chicken Burrito Bowl",
@@ -100,7 +160,13 @@ const combinedFoodDatabase = [
     fat: 16,
     carbs: 18,
     protein: 42,
-    source: "Chipotle"
+    source: "Chipotle",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Chicken", "Lettuce", "Salsa", "Guacamole"]
   },
   {
     name: "Chicken Salad",
@@ -109,10 +175,15 @@ const combinedFoodDatabase = [
     fat: 11,
     carbs: 57,
     protein: 48,
-    source: "Chipotle"
+    source: "Chipotle",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Chicken", "Lettuce", "Beans", "Salsa", "Guacamole"]
   },
 
-  // Just Salad items
   {
     name: "Chicken Barbacoa Market Bowl",
     servingSize: 400,
@@ -120,7 +191,13 @@ const combinedFoodDatabase = [
     fat: 23,
     carbs: 33,
     protein: 19,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Chicken", "Barbacoa Sauce", "Rice", "Beans", "Lettuce"]
   },
   {
     name: "Forager's Warm Bowl",
@@ -129,7 +206,13 @@ const combinedFoodDatabase = [
     fat: 29,
     carbs: 79,
     protein: 25,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Quinoa", "Sweet Potatoes", "Mushrooms", "Kale", "Cheese"]
   },
   {
     name: "Keto Zoodle Bowl",
@@ -138,7 +221,13 @@ const combinedFoodDatabase = [
     fat: 32,
     carbs: 14,
     protein: 34,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Zoodles", "Chicken", "Almonds", "Avocado", "Dressing"]
   },
   {
     name: "Buffalo Chicken Wrap",
@@ -147,7 +236,13 @@ const combinedFoodDatabase = [
     fat: 21,
     carbs: 61,
     protein: 34,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Buffalo Sauce", "Tortilla", "Cheese", "Lettuce"]
   },
   {
     name: "Spicy Chicken Caesar Wrap",
@@ -156,7 +251,13 @@ const combinedFoodDatabase = [
     fat: 20,
     carbs: 62,
     protein: 38,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Chicken", "Caesar Dressing", "Tortilla", "Cheese", "Lettuce"]
   },
   {
     name: "Avo Blast Toast",
@@ -165,7 +266,13 @@ const combinedFoodDatabase = [
     fat: 27,
     carbs: 51,
     protein: 8,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: ["Avocado", "Bread", "Chili Flakes", "Olive Oil", "Salt"]
   },
   {
     name: "Peanut Butter Warrior Smoothie",
@@ -174,7 +281,13 @@ const combinedFoodDatabase = [
     fat: 7,
     carbs: 55,
     protein: 37,
-    source: "Just Salad"
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Peanut Butter", "Banana", "Almond Milk", "Protein Powder"]
   },
 
   // Panera Bread items
@@ -185,7 +298,13 @@ const combinedFoodDatabase = [
     fat: 14,
     carbs: 39,
     protein: 19,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: ["Avocado", "Egg Whites", "Spinach", "Bread"]
   },
   {
     name: "Greek Yogurt Parfait with Mixed Berries",
@@ -194,7 +313,13 @@ const combinedFoodDatabase = [
     fat: 0,
     carbs: 0,
     protein: 0,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Greek Yogurt", "Mixed Berries", "Granola"]
   },
   {
     name: "Steel Cut Oatmeal with Strawberries & Pecans",
@@ -203,7 +328,13 @@ const combinedFoodDatabase = [
     fat: 14,
     carbs: 52,
     protein: 8,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Steel Cut Oats", "Strawberries", "Pecans"]
   },
   {
     name: "Asiago Cheese Bagel",
@@ -212,7 +343,13 @@ const combinedFoodDatabase = [
     fat: 0,
     carbs: 0,
     protein: 0,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Bagel", "Asiago Cheese"]
   },
   {
     name: "Plain Bagel",
@@ -221,7 +358,13 @@ const combinedFoodDatabase = [
     fat: 0,
     carbs: 0,
     protein: 0,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: ["Bagel"]
   },
   {
     name: "Sprouted Grain Bagel Flat",
@@ -230,7 +373,13 @@ const combinedFoodDatabase = [
     fat: 0,
     carbs: 0,
     protein: 0,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: ["Sprouted Grain Bagel"]
   },
   {
     name: "Cinnamon Crunch Bagel",
@@ -239,7 +388,13 @@ const combinedFoodDatabase = [
     fat: 0,
     carbs: 0,
     protein: 0,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: ["Bagel", "Cinnamon", "Crunch Topping"]
   },
   {
     name: "French Baguette",
@@ -248,7 +403,13 @@ const combinedFoodDatabase = [
     fat: 0,
     carbs: 30,
     protein: 5,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "French",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: ["Flour", "Water", "Yeast", "Salt"]
   },
   {
     name: "Potato Chips",
@@ -257,7 +418,13 @@ const combinedFoodDatabase = [
     fat: 8,
     carbs: 17,
     protein: 2,
-    source: "Panera Bread"
+    source: "Panera Bread",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Potatoes", "Oil", "Salt"]
   },
 
   // Cava items
@@ -268,7 +435,13 @@ const combinedFoodDatabase = [
     fat: 13,
     carbs: 1,
     protein: 27,
-    source: "Cava"
+    source: "Cava",
+    cuisine: "Mediterranean",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Chicken", "Olive Oil", "Spices"]
   },
   {
     name: "Greek Salad Bowl",
@@ -277,7 +450,13 @@ const combinedFoodDatabase = [
     fat: 30,
     carbs: 20,
     protein: 10,
-    source: "Cava"
+    source: "Cava",
+    cuisine: "Mediterranean",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: false,
+    ingredients: ["Lettuce", "Cucumbers", "Tomatoes", "Feta Cheese", "Olives"]
   },
   {
     name: "Spicy Lamb Meatballs",
@@ -286,7 +465,13 @@ const combinedFoodDatabase = [
     fat: 20,
     carbs: 5,
     protein: 20,
-    source: "Cava"
+    source: "Cava",
+    cuisine: "Mediterranean",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Lamb", "Spices", "Herbs", "Olive Oil"]
   },
   {
     name: "Side Pita",
@@ -295,7 +480,13 @@ const combinedFoodDatabase = [
     fat: 5,
     carbs: 35,
     protein: 6,
-    source: "Cava"
+    source: "Cava",
+    cuisine: "Mediterranean",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: ["Flour", "Water", "Yeast", "Salt"]
   },
   {
     name: "Organic Traditional Hummus",
@@ -304,7 +495,13 @@ const combinedFoodDatabase = [
     fat: 6,
     carbs: 4,
     protein: 2,
-    source: "Cava"
+    source: "Cava",
+    cuisine: "Mediterranean",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: ["Chickpeas", "Olive Oil", "Garlic", "Lemon", "Tahini"]
   }
 ];
 

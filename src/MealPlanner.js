@@ -1,3 +1,4 @@
+// MealPlanner.js
 import React, { useState } from 'react';
 import {
   ChakraProvider,
@@ -63,6 +64,7 @@ const MealPlanner = () => {
     activityLevel: '',
     gender: 'male',
     mealCount: '3',
+    selectedFoodSources: [], // Ensure this field is included
   });
   const [mealPlan, setMealPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,9 +86,9 @@ const MealPlanner = () => {
   };
 
   const handleGenerateMealPlan = (preferences = userInput) => {
-    const { weight, height, activityLevel, gender, mealCount } = preferences;
-    if (!weight || !height || !activityLevel || !mealCount) {
-      setError('Please fill in all fields');
+    const { weight, height, activityLevel, gender, mealCount, selectedFoodSources } = preferences;
+    if (!weight || !height || !activityLevel || !mealCount || selectedFoodSources.length === 0) {
+      setError('Please fill in all fields and select at least one food source');
       return;
     }
 
@@ -103,9 +105,11 @@ const MealPlanner = () => {
         carbs: Math.round(targetMacros.carbs / mealsPerDay),
       };
 
-      const plan = generateMealPlan(targetMacros, perMealMacros, mealsPerDay, preferences);
+      // Pass selectedFoodSources to generateMealPlan
+      const plan = generateMealPlan(targetMacros, perMealMacros, mealsPerDay, selectedFoodSources);
       setMealPlan({ ...plan, targetMacros, perMealMacros });
     } catch (err) {
+      console.error(err);
       setError('An error occurred while generating the meal plan. Please try again.');
     } finally {
       setIsLoading(false);
@@ -120,6 +124,7 @@ const MealPlanner = () => {
       activityLevel: preferences.activityLevel,
       gender: preferences.gender,
       mealCount: preferences.mealCount,
+      selectedFoodSources: preferences.selectedFoodSources, // Ensure this is set
     });
     setShowQuestionnaire(false);
     handleGenerateMealPlan(preferences);
@@ -145,24 +150,54 @@ const MealPlanner = () => {
                 <Box borderWidth={1} borderRadius="lg" p={6} borderColor={borderColor} bg={cardBgColor}>
                   <VStack spacing={4}>
                     <HStack spacing={4} width="100%">
-                      <Input name="weight" placeholder="Weight (kg)" value={userInput.weight} onChange={handleInputChange} type="number" />
-                      <Input name="height" placeholder="Height (cm)" value={userInput.height} onChange={handleInputChange} type="number" />
+                      <Input
+                        name="weight"
+                        placeholder="Weight (kg)"
+                        value={userInput.weight}
+                        onChange={handleInputChange}
+                        type="number"
+                        isRequired
+                      />
+                      <Input
+                        name="height"
+                        placeholder="Height (cm)"
+                        value={userInput.height}
+                        onChange={handleInputChange}
+                        type="number"
+                        isRequired
+                      />
                     </HStack>
-                    
-                    <Select name="activityLevel" value={userInput.activityLevel} onChange={handleInputChange} placeholder="Select Activity Level">
+
+                    <Select
+                      name="activityLevel"
+                      value={userInput.activityLevel}
+                      onChange={handleInputChange}
+                      placeholder="Select Activity Level"
+                      isRequired
+                    >
                       <option value="1.2">Sedentary</option>
                       <option value="1.375">Lightly Active</option>
                       <option value="1.55">Moderately Active</option>
                       <option value="1.725">Very Active</option>
                       <option value="1.9">Extra Active</option>
                     </Select>
-                    
+
                     <HStack spacing={4} width="100%">
-                      <Select name="gender" value={userInput.gender} onChange={handleInputChange}>
+                      <Select
+                        name="gender"
+                        value={userInput.gender}
+                        onChange={handleInputChange}
+                        isRequired
+                      >
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                       </Select>
-                      <Select name="mealCount" value={userInput.mealCount} onChange={handleInputChange}>
+                      <Select
+                        name="mealCount"
+                        value={userInput.mealCount}
+                        onChange={handleInputChange}
+                        isRequired
+                      >
                         <option value="1">1 Meal</option>
                         <option value="2">2 Meals</option>
                         <option value="3">3 Meals</option>
@@ -170,9 +205,9 @@ const MealPlanner = () => {
                         <option value="5">5 Meals</option>
                       </Select>
                     </HStack>
-                    
+
                     <Button
-                      onClick={handleGenerateMealPlan}
+                      onClick={() => handleGenerateMealPlan()}
                       isLoading={isLoading}
                       colorScheme="teal"
                       size="lg"
@@ -192,7 +227,7 @@ const MealPlanner = () => {
                 <SlideFade in={true} offsetY="20px">
                   <Box borderWidth={1} borderRadius="lg" p={6} bg={cardBgColor} borderColor={borderColor} boxShadow="md">
                     <Heading as="h2" size="lg" mb={4} color={headingColor}>Your Meal Plan</Heading>
-                    
+
                     <Table variant="simple" colorScheme="teal" mb={6}>
                       <Thead>
                         <Tr>
@@ -217,7 +252,11 @@ const MealPlanner = () => {
                               <Progress
                                 value={calculatePercentage(mealPlan.actualMacros[macro], mealPlan.targetMacros[macro])}
                                 size="sm"
-                                colorScheme={macro === 'calories' ? 'red' : macro === 'protein' ? 'green' : macro === 'fat' ? 'yellow' : 'purple'}
+                                colorScheme={
+                                  macro === 'calories' ? 'red' :
+                                  macro === 'protein' ? 'green' :
+                                  macro === 'fat' ? 'yellow' : 'purple'
+                                }
                                 borderRadius="full"
                               />
                             </Td>
@@ -247,13 +286,31 @@ const MealPlanner = () => {
                           <List spacing={3}>
                             {meal.foods.map((food, foodIndex) => (
                               <ListItem key={foodIndex} py={2} borderBottomWidth={1} borderColor={borderColor}>
-                                <Text fontWeight="bold">{food.name} {food.isHalfPortion ? '(Half Portion)' : ''}</Text>
-                                <Text fontSize="sm">Serving Size: {food.isHalfPortion ? `${food.servingSize}g (Half of ${food.originalServingSize}g)` : `${food.servingSize}g`}</Text>
+                                <Text fontWeight="bold">
+                                  {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
+                                </Text>
+                                <Text fontSize="sm">
+                                  Serving Size: {food.isHalfPortion
+                                    ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
+                                    : `${food.servingSize}g`}
+                                </Text>
                                 <HStack spacing={4} mt={2}>
-                                  <HStack><MacroIcon type="calories" /><Text fontSize="sm">{food.calories} kcal</Text></HStack>
-                                  <HStack><MacroIcon type="protein" /><Text fontSize="sm">{food.protein}g</Text></HStack>
-                                  <HStack><MacroIcon type="fat" /><Text fontSize="sm">{food.fat}g</Text></HStack>
-                                  <HStack><MacroIcon type="carbs" /><Text fontSize="sm">{food.carbs}g</Text></HStack>
+                                  <HStack>
+                                    <MacroIcon type="calories" />
+                                    <Text fontSize="sm">{food.calories} kcal</Text>
+                                  </HStack>
+                                  <HStack>
+                                    <MacroIcon type="protein" />
+                                    <Text fontSize="sm">{food.protein}g</Text>
+                                  </HStack>
+                                  <HStack>
+                                    <MacroIcon type="fat" />
+                                    <Text fontSize="sm">{food.fat}g</Text>
+                                  </HStack>
+                                  <HStack>
+                                    <MacroIcon type="carbs" />
+                                    <Text fontSize="sm">{food.carbs}g</Text>
+                                  </HStack>
                                 </HStack>
                               </ListItem>
                             ))}

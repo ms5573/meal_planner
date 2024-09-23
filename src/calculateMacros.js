@@ -1,4 +1,4 @@
-const calculateMacros = (weight, height, activityLevel, gender) => {
+const calculateMacros = (weight, height, activityLevel, gender, exerciseFrequency) => {
   const age = 25; // Assumed age
   
   // Calculate BMR
@@ -9,8 +9,24 @@ const calculateMacros = (weight, height, activityLevel, gender) => {
     bmr = 10 * weight + 6.25 * height - 5 * age - 161;
   }
 
+  // Adjust activity level based on exercise frequency
+  let adjustedActivityLevel = parseFloat(activityLevel);
+  
+  if (exerciseFrequency >= 1 && exerciseFrequency <= 2) {
+    adjustedActivityLevel += 0.1;
+  } else if (exerciseFrequency >= 3 && exerciseFrequency <= 4) {
+    adjustedActivityLevel += 0.2;
+  } else if (exerciseFrequency >= 5 && exerciseFrequency <= 6) {
+    adjustedActivityLevel += 0.3;
+  } else if (exerciseFrequency === 7) {
+    adjustedActivityLevel += 0.4;
+  }
+
+  // Ensure adjustedActivityLevel doesn't exceed the maximum value
+  adjustedActivityLevel = Math.min(adjustedActivityLevel, 1.9);
+
   // Calculate TDEE
-  const tdee = bmr * parseFloat(activityLevel);
+  const tdee = bmr * adjustedActivityLevel;
 
   // Calculate total daily calories for muscle gain
   const totalDailyCalories = tdee + 500;
