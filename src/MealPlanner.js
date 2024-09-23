@@ -86,7 +86,7 @@ const MealPlanner = () => {
   };
 
   const handleGenerateMealPlan = (preferences = userInput) => {
-    const { weight, height, activityLevel, gender, mealCount, selectedFoodSources } = preferences;
+    const { weight, height, activityLevel, gender, mealCount, selectedFoodSources, exerciseFrequency } = preferences;
     if (!weight || !height || !activityLevel || !mealCount || selectedFoodSources.length === 0) {
       setError('Please fill in all fields and select at least one food source');
       return;
@@ -96,7 +96,13 @@ const MealPlanner = () => {
     setError(null);
 
     try {
-      const targetMacros = calculateMacros(parseFloat(weight), parseFloat(height), activityLevel, gender);
+      const targetMacros = calculateMacros(
+        parseFloat(weight),
+        parseFloat(height),
+        activityLevel,
+        gender,
+        parseInt(exerciseFrequency)
+      );
       const mealsPerDay = parseInt(mealCount);
       const perMealMacros = {
         calories: Math.round(targetMacros.calories / mealsPerDay),
