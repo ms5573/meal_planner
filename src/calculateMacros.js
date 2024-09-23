@@ -1,4 +1,4 @@
-const calculateMacros = (weight, height, activityLevel, gender, exerciseFrequency) => {
+const calculateMacros = (weight, height, activityLevel, gender, exerciseFrequency, fitnessGoal, macroRatio) => {
   const age = 25; // Assumed age
   
   // Calculate BMR
@@ -28,19 +28,37 @@ const calculateMacros = (weight, height, activityLevel, gender, exerciseFrequenc
   // Calculate TDEE
   const tdee = bmr * adjustedActivityLevel;
 
-  // Calculate total daily calories for muscle gain
-  const totalDailyCalories = tdee + 500;
+  // Adjust TDEE based on fitness goal
+  let adjustedCalories = tdee;
+  if (fitnessGoal === 'weight-loss') {
+    adjustedCalories = tdee - 500; // 500 kcal deficit
+  } else if (fitnessGoal === 'muscle-gain') {
+    adjustedCalories = tdee + 250; // 250 kcal surplus
+  }
+  // For maintenance, TDEE remains unchanged
 
-  // Calculate macronutrients
-  const protein = weight * 2;
-  const fat = Math.round((totalDailyCalories * 0.25) / 9);
-  const carbs = Math.round((totalDailyCalories - (protein * 4 + fat * 9)) / 4);
+  // Set macro ratios
+  let macroPercentages = { protein: 0.3, carbs: 0.4, fat: 0.3 }; // Default balanced
+  if (macroRatio === 'high-protein') {
+    macroPercentages = { protein: 0.4, carbs: 0.4, fat: 0.2 };
+  } else if (macroRatio === 'low-carb') {
+    macroPercentages = { protein: 0.3, carbs: 0.3, fat: 0.4 };
+  }
+
+  // Calculate macros
+  const proteinCalories = adjustedCalories * macroPercentages.protein;
+  const carbCalories = adjustedCalories * macroPercentages.carbs;
+  const fatCalories = adjustedCalories * macroPercentages.fat;
+
+  const proteinGrams = proteinCalories / 4;
+  const carbGrams = carbCalories / 4;
+  const fatGrams = fatCalories / 9;
 
   return {
-    calories: Math.round(totalDailyCalories),
-    protein,
-    fat,
-    carbs
+    calories: Math.round(adjustedCalories),
+    protein: Math.round(proteinGrams),
+    carbs: Math.round(carbGrams),
+    fat: Math.round(fatGrams),
   };
 };
 

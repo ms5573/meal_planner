@@ -66,6 +66,11 @@ const MealPlanner = () => {
     mealCount: '3',
     selectedFoodSources: [],
     dietaryRestrictions: [],
+    exerciseFrequency: '',
+    fitnessGoal: '',
+    macroRatio: '',
+    avoidFoods: [],
+    cuisinePreferences: [],
   });
   const [mealPlan, setMealPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +92,21 @@ const MealPlanner = () => {
   };
 
   const handleGenerateMealPlan = (preferences = userInput) => {
-    const { weight, height, activityLevel, gender, mealCount, selectedFoodSources, exerciseFrequency, dietaryRestrictions } = preferences;
+    const { 
+      weight, 
+      height, 
+      activityLevel, 
+      gender, 
+      mealCount, 
+      selectedFoodSources, 
+      exerciseFrequency, 
+      dietaryRestrictions,
+      fitnessGoal,
+      macroRatio,
+      avoidFoods,
+      cuisinePreferences
+    } = preferences;
+
     if (!weight || !height || !activityLevel || !mealCount || selectedFoodSources.length === 0) {
       setError('Please fill in all fields and select at least one food source');
       return;
@@ -102,7 +121,9 @@ const MealPlanner = () => {
         parseFloat(height),
         activityLevel,
         gender,
-        parseInt(exerciseFrequency)
+        parseInt(exerciseFrequency),
+        fitnessGoal,
+        macroRatio
       );
       const mealsPerDay = parseInt(mealCount);
       const perMealMacros = {
@@ -112,8 +133,16 @@ const MealPlanner = () => {
         carbs: Math.round(targetMacros.carbs / mealsPerDay),
       };
 
-      // Pass selectedFoodSources and dietaryRestrictions to generateMealPlan
-      const plan = generateMealPlan(targetMacros, perMealMacros, mealsPerDay, selectedFoodSources, dietaryRestrictions);
+      // Pass additional parameters to generateMealPlan
+      const plan = generateMealPlan(
+        targetMacros,
+        perMealMacros,
+        mealsPerDay,
+        selectedFoodSources,
+        dietaryRestrictions,
+        avoidFoods,
+        cuisinePreferences
+      );
       setMealPlan({ ...plan, targetMacros, perMealMacros });
     } catch (err) {
       console.error(err);
@@ -133,6 +162,11 @@ const MealPlanner = () => {
       mealCount: preferences.mealCount,
       selectedFoodSources: preferences.selectedFoodSources,
       dietaryRestrictions: preferences.dietaryRestrictions,
+      exerciseFrequency: preferences.exerciseFrequency,
+      fitnessGoal: preferences.fitnessGoal,
+      macroRatio: preferences.macroRatio,
+      avoidFoods: preferences.avoidFoods,
+      cuisinePreferences: preferences.cuisinePreferences,
     });
     setShowQuestionnaire(false);
     handleGenerateMealPlan(preferences);
