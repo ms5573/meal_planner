@@ -1,12 +1,19 @@
 // generateMealPlan.js
 import foodDatabase from './foodDatabase';
 
-const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFoodSources) => {
+const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFoodSources, dietaryRestrictions = []) => {
   const meals = [];
   let dailyMacros = { calories: 0, protein: 0, fat: 0, carbs: 0 };
 
-  // Filter foods by selected sources
-  const filteredFoodDatabase = foodDatabase.filter(food => selectedFoodSources.includes(food.source));
+  // Filter foods by selected sources and dietary restrictions
+  const filteredFoodDatabase = foodDatabase.filter(food => {
+    if (!selectedFoodSources.includes(food.source)) return false;
+    if (dietaryRestrictions.includes('vegetarian') && !food.isVegetarian) return false;
+    if (dietaryRestrictions.includes('vegan') && !food.isVegan) return false;
+    if (dietaryRestrictions.includes('gluten-free') && !food.isGlutenFree) return false;
+    if (dietaryRestrictions.includes('dairy-free') && !food.isDairyFree) return false;
+    return true;
+  });
 
   // Group foods by source
   const foodsBySource = {};
@@ -24,7 +31,7 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       calories: target.calories - current.calories,
       protein: target.protein - current.protein,
       fat: target.fat - current.fat,
-      carbs: target.carbs - current.carbs
+      carbs: target.carbs - current.carbs,
     };
   };
 
@@ -34,12 +41,12 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
     const fatWeight = 1;
     const carbWeight = 1;
 
-    // Try full portion
+    // Full portion macros
     const fullPortionMacros = {
       calories: food.calories,
       protein: food.protein,
       fat: food.fat,
-      carbs: food.carbs
+      carbs: food.carbs,
     };
     const fullPortionScore = (
       calorieWeight * Math.abs(fullPortionMacros.calories - remainingMacros.calories) +
@@ -48,12 +55,12 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       carbWeight * Math.abs(fullPortionMacros.carbs - remainingMacros.carbs)
     );
 
-    // Try half portion
+    // Half portion macros
     const halfPortionMacros = {
       calories: food.calories / 2,
       protein: food.protein / 2,
       fat: food.fat / 2,
-      carbs: food.carbs / 2
+      carbs: food.carbs / 2,
     };
     const halfPortionScore = (
       calorieWeight * Math.abs(halfPortionMacros.calories - remainingMacros.calories) +
@@ -62,19 +69,16 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       carbWeight * Math.abs(halfPortionMacros.carbs - remainingMacros.carbs)
     );
 
-    // Choose the portion with the better score
-    if (fullPortionScore <= halfPortionScore) {
-      return { score: fullPortionScore, factor: 1 };
-    } else {
-      return { score: halfPortionScore, factor: 0.5 };
-    }
+    return fullPortionScore <= halfPortionScore
+      ? { score: fullPortionScore, factor: 1 }
+      : { score: halfPortionScore, factor: 0.5 };
   };
 
   const generateMeal = (targetMealMacros, isLastMeal = false, usedFoods = [], availableFoods = [], maxFoodsPerMeal = 3) => {
     let mealMacros = { calories: 0, protein: 0, fat: 0, carbs: 0 };
     let mealFoods = [];
-    const maxIterations = 10; // Prevent infinite loops
     let iterations = 0;
+    const maxIterations = 10;
 
     while (
       (mealMacros.calories < targetMealMacros.calories * 0.95 ||
@@ -85,16 +89,14 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       mealFoods.length < maxFoodsPerMeal
     ) {
       const remainingMacros = getMacrosDifference(mealMacros, targetMealMacros);
-
       let bestFood = null;
       let bestScore = Infinity;
       let bestFactor = 1;
 
       for (let food of availableFoods) {
         if (!isLastMeal && usedFoods.includes(food.name)) continue;
-        if (mealFoods.find(item => item.name === food.name)) continue; // Avoid duplicate foods in the same meal
+        if (mealFoods.find(item => item.name === food.name)) continue;
 
-        // Get the best portion (full or half) for this food
         const { score, factor } = getFoodScore(food, remainingMacros);
 
         if (score < bestScore) {
@@ -106,7 +108,6 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
 
       if (!bestFood) break;
 
-      // Adjust serving size based on the factor (1 or 0.5)
       const adjustedFood = {
         ...bestFood,
         servingSize: bestFood.servingSize * bestFactor,
@@ -115,15 +116,9 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
         fat: Math.round(bestFood.fat * bestFactor * 10) / 10,
         carbs: Math.round(bestFood.carbs * bestFactor * 10) / 10,
         isHalfPortion: bestFactor === 0.5,
-        // Include original values for display
         originalServingSize: bestFood.servingSize,
-        originalCalories: bestFood.calories,
-        originalProtein: bestFood.protein,
-        originalFat: bestFood.fat,
-        originalCarbs: bestFood.carbs
       };
 
-      // Update meal macros tentatively
       const newMealMacros = {
         calories: mealMacros.calories + adjustedFood.calories,
         protein: mealMacros.protein + adjustedFood.protein,
@@ -131,11 +126,7 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
         carbs: mealMacros.carbs + adjustedFood.carbs,
       };
 
-      // Check if adding this food would significantly overshoot the target macros
-      if (
-        newMealMacros.calories > targetMealMacros.calories * 1.05 &&
-        mealFoods.length > 0 // Ensure at least one food is added
-      ) {
+      if (newMealMacros.calories > targetMealMacros.calories * 1.05 && mealFoods.length > 0) {
         break;
       }
 
@@ -146,9 +137,7 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       iterations++;
     }
 
-    // Ensure the meal is practical
     if (mealFoods.length === 0) {
-      // If no foods were added, select the food closest to the target macros
       let bestFood = null;
       let bestScore = Infinity;
       let bestFactor = 1;
@@ -171,12 +160,7 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
           fat: Math.round(bestFood.fat * bestFactor * 10) / 10,
           carbs: Math.round(bestFood.carbs * bestFactor * 10) / 10,
           isHalfPortion: bestFactor === 0.5,
-          // Include original values for display
           originalServingSize: bestFood.servingSize,
-          originalCalories: bestFood.calories,
-          originalProtein: bestFood.protein,
-          originalFat: bestFood.fat,
-          originalCarbs: bestFood.carbs
         };
 
         mealFoods.push(adjustedFood);
@@ -200,7 +184,6 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       ? getMacrosDifference(dailyMacros, targetMacros)
       : perMealMacros;
 
-    // Ensure target macros for the last meal are not negative
     mealTargetMacros = {
       calories: Math.max(mealTargetMacros.calories, 0),
       protein: Math.max(mealTargetMacros.protein, 0),
@@ -208,11 +191,9 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       carbs: Math.max(mealTargetMacros.carbs, 0),
     };
 
-    // Select source for this meal
     const source = sources[mealNum % sources.length];
     const availableFoods = foodsBySource[source];
 
-    // Generate meal
     const meal = generateMeal(mealTargetMacros, isLastMeal, usedFoods, availableFoods);
     meals.push({ ...meal, source });
 
@@ -221,8 +202,6 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
     dailyMacros.fat += meal.totalMacros.fat;
     dailyMacros.carbs += meal.totalMacros.carbs;
   }
-
-  // No need for final adjustment as we're using only full or half portions
 
   return { meals, actualMacros: dailyMacros };
 };

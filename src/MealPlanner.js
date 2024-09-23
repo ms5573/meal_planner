@@ -64,7 +64,8 @@ const MealPlanner = () => {
     activityLevel: '',
     gender: 'male',
     mealCount: '3',
-    selectedFoodSources: [], // Ensure this field is included
+    selectedFoodSources: [],
+    dietaryRestrictions: [],
   });
   const [mealPlan, setMealPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +87,7 @@ const MealPlanner = () => {
   };
 
   const handleGenerateMealPlan = (preferences = userInput) => {
-    const { weight, height, activityLevel, gender, mealCount, selectedFoodSources, exerciseFrequency } = preferences;
+    const { weight, height, activityLevel, gender, mealCount, selectedFoodSources, exerciseFrequency, dietaryRestrictions } = preferences;
     if (!weight || !height || !activityLevel || !mealCount || selectedFoodSources.length === 0) {
       setError('Please fill in all fields and select at least one food source');
       return;
@@ -111,8 +112,8 @@ const MealPlanner = () => {
         carbs: Math.round(targetMacros.carbs / mealsPerDay),
       };
 
-      // Pass selectedFoodSources to generateMealPlan
-      const plan = generateMealPlan(targetMacros, perMealMacros, mealsPerDay, selectedFoodSources);
+      // Pass selectedFoodSources and dietaryRestrictions to generateMealPlan
+      const plan = generateMealPlan(targetMacros, perMealMacros, mealsPerDay, selectedFoodSources, dietaryRestrictions);
       setMealPlan({ ...plan, targetMacros, perMealMacros });
     } catch (err) {
       console.error(err);
@@ -130,7 +131,8 @@ const MealPlanner = () => {
       activityLevel: preferences.activityLevel,
       gender: preferences.gender,
       mealCount: preferences.mealCount,
-      selectedFoodSources: preferences.selectedFoodSources, // Ensure this is set
+      selectedFoodSources: preferences.selectedFoodSources,
+      dietaryRestrictions: preferences.dietaryRestrictions,
     });
     setShowQuestionnaire(false);
     handleGenerateMealPlan(preferences);
