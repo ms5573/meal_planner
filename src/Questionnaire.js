@@ -69,7 +69,12 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
   }, []);
 
   const handleSubmit = () => {
-    onGenerateMealPlan(preferences);
+    // Convert avoidFoods string to array
+    const updatedPreferences = {
+      ...preferences,
+      avoidFoods: preferences.avoidFoods.split(',').map(food => food.trim()).filter(food => food !== '')
+    };
+    onGenerateMealPlan(updatedPreferences);
   };
 
   const bgColor = useColorModeValue("gray.50", "gray.800");
@@ -153,7 +158,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       )
     },
     {
-      title: "Exercise Frequency per Week", // Renamed Question
+      title: "Exercise Frequency per Week",
       icon: FaDumbbell,
       component: (
         <FormControl isRequired>
@@ -204,7 +209,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       )
     },
     {
-      title: "Number of Meals per Day", // Renamed Question
+      title: "Number of Meals per Day",
       icon: FaBalanceScale,
       component: (
         <FormControl isRequired>
