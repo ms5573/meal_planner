@@ -111,11 +111,11 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       component: ({ value, onChange, error }) => (
         <FormControl isRequired isInvalid={!!error}>
           <Select value={value} onChange={(e) => onChange(e.target.value)} placeholder="Select activity level">
-            <option value="1.2">Sedentary</option>
-            <option value="1.375">Lightly Active</option>
-            <option value="1.55">Moderately Active</option>
-            <option value="1.725">Very Active</option>
-            <option value="1.9">Extra Active</option>
+            <option value="1.2">Sedentary (Little or no exercise)</option>
+            <option value="1.375">Lightly Active (Light exercise 1-3 days/week)</option>
+            <option value="1.55">Moderately Active (Moderate exercise 3-5 days/week)</option>
+            <option value="1.725">Very Active (Hard exercise 6-7 days/week)</option>
+            <option value="1.9">Extra Active (Very hard exercise & physical job)</option>
           </Select>
           <FormErrorMessage>{error}</FormErrorMessage>
         </FormControl>
