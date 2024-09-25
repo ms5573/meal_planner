@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
   VStack, HStack, FormControl, Input, Select, Checkbox, CheckboxGroup,
   Radio, RadioGroup, Button, Slider, SliderTrack, SliderFilledTrack, SliderThumb,
   Box, SimpleGrid, useColorModeValue, Progress, Icon, Flex, Heading, keyframes, Text,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import {
   FaWeight, FaRulerVertical, FaVenusMars, FaRunning, FaAppleAlt, FaUtensils,
@@ -19,58 +20,281 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
     exerciseFrequency: 3,
     dietaryRestrictions: [],
     cuisinePreferences: [],
-    avoidFoods: '',
     fitnessGoal: '',
     macroRatio: '',
-    weightGoal: '',
     selectedFoodSources: [],
   });
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [weightInput, setWeightInput] = useState('');
-  const [heightInput, setHeightInput] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const weightInputRef = useRef(null);
+  const heightInputRef = useRef(null);
 
   const handleInputChange = useCallback((name, value) => {
-    setPreferences((prev) => ({ ...prev, [name]: value }));
+    setPreferences(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
   }, []);
 
-  const handleWeightChange = useCallback(
-    (e) => {
-      const value = e.target.value;
-      if (/^\d*\.?\d*$/.test(value)) {
-        setWeightInput(value);
-        handleInputChange('weight', value);
-      }
-    },
-    [handleInputChange]
-  );
-
-  const handleHeightChange = useCallback(
-    (e) => {
-      const value = e.target.value;
-      if (/^\d*\.?\d*$/.test(value)) {
-        setHeightInput(value);
-        handleInputChange('height', value);
-      }
-    },
-    [handleInputChange]
-  );
-
-  const weightInputRef = useCallback((node) => {
-    if (node !== null) {
-      node.focus();
+  const validateInput = useCallback((name, value) => {
+    switch (name) {
+      case 'weight':
+      case 'height':
+        return value && Number(value) > 0 ? '' : 'Please enter a valid number';
+      case 'gender':
+      case 'activityLevel':
+      case 'fitnessGoal':
+      case 'macroRatio':
+        return value ? '' : 'Please select an option';
+      case 'selectedFoodSources':
+        return value.length > 0 ? '' : 'Please select at least one food source';
+      default:
+        return '';
     }
   }, []);
 
-  const heightInputRef = useCallback((node) => {
-    if (node !== null) {
-      node.focus();
-    }
-  }, []);
+  const questions = useMemo(() => [
+    {
+      title: "Weight in Kg",
+      icon: FaWeight,
+      name: "weight",
+      component: ({ error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <Input
+            ref={weightInputRef}
+            placeholder="Enter weight (kg)"
+            type="number"
+            min="20"
+            max="300"
+          />
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Height in cm",
+      icon: FaRulerVertical,
+      name: "height",
+      component: ({ error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <Input
+            ref={heightInputRef}
+            placeholder="Enter height (cm)"
+            type="number"
+            min="50"
+            max="250"
+          />
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Gender",
+      icon: FaVenusMars,
+      name: "gender",
+      component: ({ value, onChange, error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <RadioGroup value={value} onChange={onChange}>
+            <HStack spacing={4}>
+              <Radio value="male">Male</Radio>
+              <Radio value="female">Female</Radio>
+            </HStack>
+          </RadioGroup>
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Activity Level",
+      icon: FaRunning,
+      name: "activityLevel",
+      component: ({ value, onChange, error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <Select value={value} onChange={(e) => onChange(e.target.value)} placeholder="Select activity level">
+            <option value="1.2">Sedentary</option>
+            <option value="1.375">Lightly Active</option>
+            <option value="1.55">Moderately Active</option>
+            <option value="1.725">Very Active</option>
+            <option value="1.9">Extra Active</option>
+          </Select>
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Exercise Frequency per Week",
+      icon: FaDumbbell,
+      name: "exerciseFrequency",
+      component: ({ value, onChange }) => (
+        <FormControl isRequired>
+          <Slider min={0} max={7} step={1} value={value} onChange={onChange}>
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb boxSize={6} fontSize="sm" fontWeight="bold">
+              {value}
+            </SliderThumb>
+          </Slider>
+          <Flex justify="space-between" mt={2}>
+            <Text fontSize="sm">0</Text>
+            <Text fontSize="sm">7</Text>
+          </Flex>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Dietary Restrictions",
+      icon: FaAppleAlt,
+      name: "dietaryRestrictions",
+      component: ({ value, onChange }) => (
+        <FormControl>
+          <CheckboxGroup value={value} onChange={onChange}>
+            <SimpleGrid columns={2} spacing={2}>
+              <Checkbox value="vegetarian">Vegetarian</Checkbox>
+              <Checkbox value="vegan">Vegan</Checkbox>
+              <Checkbox value="gluten-free">Gluten-free</Checkbox>
+              <Checkbox value="dairy-free">Dairy-free</Checkbox>
+            </SimpleGrid>
+          </CheckboxGroup>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Number of Meals per Day",
+      icon: FaBalanceScale,
+      name: "mealCount",
+      component: ({ value, onChange }) => (
+        <FormControl isRequired>
+          <Slider min={1} max={5} step={1} value={value} onChange={onChange}>
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb boxSize={6} fontSize="sm" fontWeight="bold">
+              {value}
+            </SliderThumb>
+          </Slider>
+          <Flex justify="space-between" mt={2}>
+            <Text fontSize="sm">1</Text>
+            <Text fontSize="sm">5</Text>
+          </Flex>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Cuisine Preferences",
+      icon: FaUtensils,
+      name: "cuisinePreferences",
+      component: ({ value, onChange }) => (
+        <FormControl>
+          <CheckboxGroup value={value} onChange={onChange}>
+            <SimpleGrid columns={2} spacing={2}>
+              <Checkbox value="mexican">Mexican</Checkbox>
+              <Checkbox value="italian">Italian</Checkbox>
+              <Checkbox value="asian">Asian</Checkbox>
+              <Checkbox value="american">American</Checkbox>
+            </SimpleGrid>
+          </CheckboxGroup>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Fitness Goal",
+      icon: FaDumbbell,
+      name: "fitnessGoal",
+      component: ({ value, onChange, error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <RadioGroup value={value} onChange={onChange}>
+            <VStack align="start">
+              <Radio value="weight-loss">Weight Loss</Radio>
+              <Radio value="muscle-gain">Muscle Gain</Radio>
+              <Radio value="maintenance">Maintenance</Radio>
+            </VStack>
+          </RadioGroup>
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Macro Ratio",
+      icon: FaBalanceScale,
+      name: "macroRatio",
+      component: ({ value, onChange, error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <Select value={value} onChange={(e) => onChange(e.target.value)} placeholder="Select a ratio">
+            <option value="balanced">Balanced (30/40/30)</option>
+            <option value="high-protein">High Protein (40/40/20)</option>
+            <option value="low-carb">Low Carb (30/50/20)</option>
+          </Select>
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+    {
+      title: "Food Source Preferences",
+      icon: FaStore,
+      name: "selectedFoodSources",
+      component: ({ value, onChange, error }) => (
+        <FormControl isRequired isInvalid={!!error}>
+          <CheckboxGroup value={value} onChange={onChange}>
+            <SimpleGrid columns={2} spacing={2}>
+              {foodSources.map((source) => (
+                <Checkbox key={source} value={source}>
+                  {source}
+                </Checkbox>
+              ))}
+            </SimpleGrid>
+          </CheckboxGroup>
+          <FormErrorMessage>{error}</FormErrorMessage>
+        </FormControl>
+      ),
+    },
+  ], [foodSources]);
 
-  const handleSubmit = () => {
-    onGenerateMealPlan(preferences);
-  };
+  const handleSubmit = useCallback(() => {
+    const updatedPreferences = { ...preferences };
+    if (weightInputRef.current) updatedPreferences.weight = weightInputRef.current.value;
+    if (heightInputRef.current) updatedPreferences.height = heightInputRef.current.value;
+
+    const allErrors = {};
+    Object.keys(updatedPreferences).forEach(key => {
+      const error = validateInput(key, updatedPreferences[key]);
+      if (error) allErrors[key] = error;
+    });
+
+    if (Object.keys(allErrors).length === 0) {
+      onGenerateMealPlan(updatedPreferences);
+    } else {
+      setErrors(allErrors);
+      const errorIndex = questions.findIndex(q => allErrors[q.name]);
+      setCurrentQuestion(errorIndex !== -1 ? errorIndex : 0);
+    }
+  }, [preferences, validateInput, onGenerateMealPlan, questions]);
+
+  const nextQuestion = useCallback(() => {
+    const currentQuestionData = questions[currentQuestion];
+    let currentValue = preferences[currentQuestionData.name];
+
+    if (currentQuestionData.name === 'weight' && weightInputRef.current) {
+      currentValue = weightInputRef.current.value;
+    } else if (currentQuestionData.name === 'height' && heightInputRef.current) {
+      currentValue = heightInputRef.current.value;
+    }
+
+    const error = validateInput(currentQuestionData.name, currentValue);
+
+    if (!error && currentQuestion < questions.length - 1) {
+      setPreferences(prev => ({ ...prev, [currentQuestionData.name]: currentValue }));
+      setCurrentQuestion(prev => prev + 1);
+    } else {
+      setErrors(prev => ({ ...prev, [currentQuestionData.name]: error }));
+    }
+  }, [currentQuestion, preferences, validateInput, questions]);
+
+  const prevQuestion = useCallback(() => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(prev => prev - 1);
+    }
+  }, [currentQuestion]);
 
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const cardBgColor = useColorModeValue("white", "gray.700");
@@ -91,227 +315,6 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       {children}
     </Box>
   ));
-
-  const questions = [
-    {
-      title: "Weight in Kg",
-      icon: FaWeight,
-      component: (
-        <FormControl isRequired>
-          <Input
-            ref={weightInputRef}
-            value={weightInput}
-            onChange={handleWeightChange}
-            placeholder="Enter weight"
-            type="text"
-          />
-        </FormControl>
-      )
-    },
-    {
-      title: "Height in cm",
-      icon: FaRulerVertical,
-      component: (
-        <FormControl isRequired>
-          <Input
-            ref={heightInputRef}
-            value={heightInput}
-            onChange={handleHeightChange}
-            placeholder="Enter height"
-            type="text"
-          />
-        </FormControl>
-      )
-    },
-    {
-      title: "Gender",
-      icon: FaVenusMars,
-      component: (
-        <FormControl isRequired>
-          <RadioGroup value={preferences.gender} onChange={(value) => handleInputChange('gender', value)}>
-            <HStack spacing={4}>
-              <Radio value="male">Male</Radio>
-              <Radio value="female">Female</Radio>
-            </HStack>
-          </RadioGroup>
-        </FormControl>
-      )
-    },
-    {
-      title: "Activity Level",
-      icon: FaRunning,
-      component: (
-        <FormControl isRequired>
-          <Select value={preferences.activityLevel} onChange={(e) => handleInputChange('activityLevel', e.target.value)} placeholder="Select activity level">
-            <option value="1.2">Sedentary</option>
-            <option value="1.375">Lightly Active</option>
-            <option value="1.55">Moderately Active</option>
-            <option value="1.725">Very Active</option>
-            <option value="1.9">Extra Active</option>
-          </Select>
-        </FormControl>
-      )
-    },
-    {
-      title: "Exercise Frequency per Week", // Renamed Question
-      icon: FaDumbbell,
-      component: (
-        <FormControl isRequired>
-          <Slider
-            min={0}
-            max={7}
-            step={1}
-            value={preferences.exerciseFrequency}
-            onChange={(value) => handleInputChange('exerciseFrequency', value)}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb boxSize={6} fontSize="sm" fontWeight="bold">
-              {preferences.exerciseFrequency}
-            </SliderThumb>
-          </Slider>
-          <Flex justify="space-between" mt={2}>
-            <Text fontSize="sm">0</Text>
-            <Text fontSize="sm">7</Text>
-          </Flex>
-        </FormControl>
-      )
-    },
-    {
-      title: "Dietary Restrictions",
-      icon: FaAppleAlt,
-      component: (
-        <FormControl>
-          <CheckboxGroup value={preferences.dietaryRestrictions} onChange={(values) => handleInputChange('dietaryRestrictions', values)}>
-            <SimpleGrid columns={2} spacing={2}>
-              <Checkbox value="vegetarian">Vegetarian</Checkbox>
-              <Checkbox value="vegan">Vegan</Checkbox>
-              <Checkbox value="gluten-free">Gluten-free</Checkbox>
-              <Checkbox value="dairy-free">Dairy-free</Checkbox>
-            </SimpleGrid>
-          </CheckboxGroup>
-        </FormControl>
-      )
-    },
-    {
-      title: "Foods to Avoid",
-      icon: FaUtensils,
-      component: (
-        <FormControl>
-          <Input value={preferences.avoidFoods} onChange={(e) => handleInputChange('avoidFoods', e.target.value)} placeholder="e.g., nuts, shellfish" />
-        </FormControl>
-      )
-    },
-    {
-      title: "Number of Meals per Day", // Renamed Question
-      icon: FaBalanceScale,
-      component: (
-        <FormControl isRequired>
-          <Slider
-            min={1}
-            max={5}
-            step={1}
-            value={preferences.mealCount}
-            onChange={(value) => handleInputChange('mealCount', value)}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb boxSize={6} fontSize="sm" fontWeight="bold">
-              {preferences.mealCount}
-            </SliderThumb>
-          </Slider>
-          <Flex justify="space-between" mt={2}>
-            <Text fontSize="sm">1</Text>
-            <Text fontSize="sm">5</Text>
-          </Flex>
-        </FormControl>
-      )
-    },
-    {
-      title: "Cuisine Preferences",
-      icon: FaUtensils,
-      component: (
-        <FormControl>
-          <CheckboxGroup
-            value={preferences.cuisinePreferences}
-            onChange={(values) => handleInputChange('cuisinePreferences', values)}
-          >
-            <SimpleGrid columns={2} spacing={2}>
-              <Checkbox value="mexican">Mexican</Checkbox>
-              <Checkbox value="italian">Italian</Checkbox>
-              <Checkbox value="asian">Asian</Checkbox>
-              <Checkbox value="american">American</Checkbox>
-            </SimpleGrid>
-          </CheckboxGroup>
-        </FormControl>
-      )
-    },
-    {
-      title: "Fitness Goal",
-      icon: FaDumbbell,
-      component: (
-        <FormControl>
-          <RadioGroup value={preferences.fitnessGoal} onChange={(value) => handleInputChange('fitnessGoal', value)}>
-            <VStack align="start">
-              <Radio value="weight-loss">Weight Loss</Radio>
-              <Radio value="muscle-gain">Muscle Gain</Radio>
-              <Radio value="maintenance">Maintenance</Radio>
-            </VStack>
-          </RadioGroup>
-        </FormControl>
-      )
-    },
-    {
-      title: "Macro Ratio",
-      icon: FaBalanceScale,
-      component: (
-        <FormControl>
-          <Select value={preferences.macroRatio} onChange={(e) => handleInputChange('macroRatio', e.target.value)}>
-            <option value="">Select a ratio</option>
-            <option value="balanced">Balanced (30/40/30)</option>
-            <option value="high-protein">High Protein (40/40/20)</option>
-            <option value="low-carb">Low Carb (30/50/20)</option>
-          </Select>
-        </FormControl>
-      )
-    },
-    {
-      title: "Food Source Preferences",
-      icon: FaStore,
-      component: (
-        <FormControl>
-          <CheckboxGroup
-            value={preferences.selectedFoodSources}
-            onChange={(values) => handleInputChange('selectedFoodSources', values)}
-          >
-            <SimpleGrid columns={2} spacing={2}>
-              {foodSources.map((source) => (
-                <Checkbox key={source} value={source}>
-                  {source}
-                </Checkbox>
-              ))}
-            </SimpleGrid>
-          </CheckboxGroup>
-        </FormControl>
-      )
-    },
-  ];
-
-  const totalQuestions = questions.length;
-
-  const nextQuestion = () => {
-    if (currentQuestion < totalQuestions - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    }
-  };
-
-  const prevQuestion = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
-  };
 
   return (
     <Box bg={bgColor} minHeight="100vh">
@@ -341,19 +344,24 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
           </Box>
         </Flex>
       </Box>
+
       <Box maxWidth="500px" mx="auto" px={4} pb={8}>
         <VStack spacing={8} align="stretch">
-          <Progress value={(currentQuestion + 1) / totalQuestions * 100} size="sm" colorScheme="teal" borderRadius="full" />
+          <Progress value={(currentQuestion + 1) / questions.length * 100} size="sm" colorScheme="teal" borderRadius="full" />
 
           <QuestionCard icon={questions[currentQuestion].icon} title={questions[currentQuestion].title}>
-            {questions[currentQuestion].component}
+            {questions[currentQuestion].component({
+              value: preferences[questions[currentQuestion].name],
+              onChange: (value) => handleInputChange(questions[currentQuestion].name, value),
+              error: errors[questions[currentQuestion].name]
+            })}
           </QuestionCard>
 
           <HStack justifyContent="space-between">
             <Button onClick={prevQuestion} isDisabled={currentQuestion === 0} variant="outline" colorScheme="teal">
               Previous
             </Button>
-            {currentQuestion === totalQuestions - 1 ? (
+            {currentQuestion === questions.length - 1 ? (
               <Button colorScheme="teal" onClick={handleSubmit}>
                 Generate Meal Plan
               </Button>
