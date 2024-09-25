@@ -3,7 +3,7 @@ import {
   VStack, HStack, FormControl, FormLabel, Input, Select, Checkbox, CheckboxGroup,
   Radio, RadioGroup, Button, Slider, SliderTrack, SliderFilledTrack, SliderThumb,
   Box, SimpleGrid, useColorModeValue, Progress, Icon, Flex, Heading, Text,
-  FormErrorMessage, Container, Divider,
+  FormErrorMessage, Container, Divider, Tooltip,
 } from "@chakra-ui/react";
 import {
   FaWeight, FaRulerVertical, FaVenusMars, FaRunning, FaAppleAlt, FaUtensils,
@@ -262,11 +262,13 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
           component: ({ value, onChange, error }) => (
             <FormControl isRequired isInvalid={!!error}>
               <FormLabel>Macro Ratio</FormLabel>
-              <Select value={value} onChange={(e) => onChange(e.target.value)} placeholder="Select a ratio">
-                <option value="balanced">Balanced (30/40/30)</option>
-                <option value="high-protein">High Protein (40/40/20)</option>
-                <option value="low-carb">Low Carb (30/50/20)</option>
-              </Select>
+              <Tooltip label="Choose a macro ratio based on your goals. For example, high protein is ideal for muscle gain." hasArrow>
+                <Select value={value} onChange={(e) => onChange(e.target.value)} placeholder="Select a ratio">
+                  <option value="balanced">Balanced (30% Protein, 40% Carbs, 30% Fat)</option>
+                  <option value="high-protein">High Protein (40% Protein, 40% Carbs, 20% Fat)</option>
+                  <option value="low-carb">Low Carb (30% Protein, 50% Fat, 20% Carbs)</option>
+                </Select>
+              </Tooltip>
               <FormErrorMessage>{error}</FormErrorMessage>
             </FormControl>
           ),
