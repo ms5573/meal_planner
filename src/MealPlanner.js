@@ -86,7 +86,6 @@ const MealPlanner = () => {
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-
   const calculatePercentage = (actual, target) => {
     return Math.round((actual / target) * 100);
   };

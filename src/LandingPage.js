@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, ListItem, UnorderedList, Tab, TabList, TabPanel, TabPanels, Tabs, Badge, Tag, TagLabel } from '@chakra-ui/react';
+import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Badge } from '@chakra-ui/react';
 import { FaUtensils, FaChartPie, FaAppleAlt, FaClipboardCheck, FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaClipboardList, FaCog, FaCalendarAlt, FaCheck } from 'react-icons/fa';
 import RestaurantLogo from './RestaurantLogo';
 
@@ -203,8 +203,6 @@ const LandingPage = () => {
               <FeatureTag>Delicious</FeatureTag>
             </Flex>
           </Box>
-
-
 
           {/* How It Works Section */}
           <Box>
