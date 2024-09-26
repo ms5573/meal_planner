@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Badge } from '@chakra-ui/react';
-import { FaUtensils, FaChartPie, FaAppleAlt, FaClipboardCheck, FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaClipboardList, FaCog, FaCalendarAlt } from 'react-icons/fa';
+import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, ListItem, UnorderedList, Tab, TabList, TabPanel, TabPanels, Tabs, Badge, Tag, TagLabel } from '@chakra-ui/react';
+import { FaUtensils, FaChartPie, FaAppleAlt, FaClipboardCheck, FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaClipboardList, FaCog, FaCalendarAlt, FaCheck } from 'react-icons/fa';
 import RestaurantLogo from './RestaurantLogo';
 
 // Feature component for displaying key features
@@ -14,12 +14,6 @@ const Feature = ({ icon, title, text }) => {
     </VStack>
   );
 };
-
-
-// const bounceAnimation = keyframes`
-//   0%, 100% { transform: translateY(0); }
-//   50% { transform: translateY(-10px); }
-// `;
 
 // How It Works Step component
 const HowItWorksStep = ({ icon, title, description }) => {
@@ -149,19 +143,49 @@ const LandingPage = () => {
     navigate('/meal-planner');
   };
 
+  const FeatureTag = ({ children }) => (
+    <Box
+      bg="teal.500"
+      color="white"
+      px={4}
+      py={2}
+      borderRadius="full"
+      fontWeight="bold"
+      fontSize="lg"
+      boxShadow="md"
+      _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+      transition="all 0.2s"
+    >
+      {children}
+    </Box>
+  );
+
   return (
     <Box bg={bgColor} minH="100vh">
       <Container maxW="container.xl" pt={20}>
         <VStack spacing={20} align="stretch">
           {/* Hero Section */}
-          <HStack spacing={8} alignItems="center" justifyContent="space-between" flexWrap="wrap">
-            <VStack align="start" spacing={6} maxW="lg">
-              <Heading as="h1" size="2xl" color="teal.500">
-                Personalized Meal Plans Made Easy
-              </Heading>
-              <Text fontSize="xl">
-                Achieve your fitness goals with customized weekly meal plans tailored to your preferences and nutritional needs.
-              </Text>
+          <Box>
+            <Heading as="h1" size="2xl" color="teal.500" textAlign="center" mb={6}>
+              Personalized Meal Plans Made Easy
+            </Heading>
+            <Text fontSize="2xl" textAlign="center" mb={10} fontWeight="medium">
+              Achieve your fitness goals with delicious meals from your favorite restaurants.
+            </Text>
+            <VStack spacing={6} mb={12} align="start" maxW="xl" mx="auto">
+              {[
+                "Customized weekly meal plans tailored to your preferences",
+                "Choose from popular spots like Chipotle and Subway",
+                "Effortless tracking for weight loss or muscle gain",
+                "Flexible options that fit your lifestyle"
+              ].map((text, index) => (
+                <HStack key={index} spacing={4}>
+                  <Icon as={FaCheck} color="green.500" boxSize={6} />
+                  <Text fontSize="xl">{text}</Text>
+                </HStack>
+              ))}
+            </VStack>
+            <Flex justify="center" mb={12}>
               <Button
                 colorScheme="teal"
                 size="lg"
@@ -171,8 +195,16 @@ const LandingPage = () => {
               >
                 Start Your Plan
               </Button>
-            </VStack>
-          </HStack>
+            </Flex>
+            <Flex justify="center" wrap="wrap" gap={4}>
+              <FeatureTag>Easy</FeatureTag>
+              <FeatureTag>Flexible</FeatureTag>
+              <FeatureTag>Personalized</FeatureTag>
+              <FeatureTag>Delicious</FeatureTag>
+            </Flex>
+          </Box>
+
+
 
           {/* How It Works Section */}
           <Box>
