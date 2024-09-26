@@ -1,19 +1,30 @@
-// generateMealPlan.js
 import foodDatabase from './foodDatabase';
 
-const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFoodSources, dietaryRestrictions = []) => {
-  const meals = [];
-  let dailyMacros = { calories: 0, protein: 0, fat: 0, carbs: 0 };
+// Utility function to shuffle an array
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+};
 
-  // Filter foods by selected sources and dietary restrictions
+const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFoodSources, dietaryRestrictions = [], avoidFoods = [], cuisinePreferences = []) => {
+  const weekPlan = [];
+  const usedFoods = []; // Global usedFoods array to track used foods across all meals
+
+  // Filter foods based on selected sources, dietary restrictions, avoid foods, and cuisine preferences
   const filteredFoodDatabase = foodDatabase.filter(food => {
     if (!selectedFoodSources.includes(food.source)) return false;
     if (dietaryRestrictions.includes('vegetarian') && !food.isVegetarian) return false;
     if (dietaryRestrictions.includes('vegan') && !food.isVegan) return false;
     if (dietaryRestrictions.includes('gluten-free') && !food.isGlutenFree) return false;
     if (dietaryRestrictions.includes('dairy-free') && !food.isDairyFree) return false;
+    if (avoidFoods.includes(food.name.toLowerCase())) return false;
+    if (cuisinePreferences.length > 0 && !cuisinePreferences.includes(food.cuisine)) return false;
     return true;
   });
+
+  const totalAvailableFoods = filteredFoodDatabase.length; // Total count of available foods
 
   // Group foods by source
   const foodsBySource = {};
@@ -26,7 +37,7 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
 
   const sources = Object.keys(foodsBySource);
 
-  // Utility function to calculate difference between current and target macros
+  // Utility function to calculate the difference between current and target macros
   const getMacrosDifference = (current, target) => {
     return {
       calories: target.calories - current.calories,
@@ -43,7 +54,6 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
     const fatWeight = 1;
     const carbWeight = 1;
 
-    // Full portion macros
     const fullPortionMacros = {
       calories: food.calories,
       protein: food.protein,
@@ -51,7 +61,6 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
       carbs: food.carbs,
     };
 
-    // Half portion macros
     const halfPortionMacros = {
       calories: food.calories / 2,
       protein: food.protein / 2,
@@ -79,7 +88,7 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
   };
 
   // Function to generate a meal based on the target macros for that meal
-  const generateMeal = (targetMealMacros, isLastMeal = false, usedFoods = [], availableFoods = [], maxFoodsPerMeal = 3) => {
+  const generateMeal = (targetMealMacros, isLastMeal = false, usedFoods, availableFoods, maxFoodsPerMeal = 3) => {
     let mealMacros = { calories: 0, protein: 0, fat: 0, carbs: 0 };
     let mealFoods = [];
     let iterations = 0;
@@ -145,35 +154,51 @@ const generateMealPlan = (targetMacros, perMealMacros, mealsPerDay, selectedFood
     return { foods: mealFoods, totalMacros: mealMacros };
   };
 
-  const usedFoods = [];
+  // Generate the meal plan for 7 days
+  for (let day = 0; day < 7; day++) {
+    const meals = [];
+    let dailyMacros = { calories: 0, protein: 0, fat: 0, carbs: 0 };
 
-  // Generate meals for the day
-  for (let mealNum = 0; mealNum < mealsPerDay; mealNum++) {
-    const isLastMeal = mealNum === mealsPerDay - 1;
-    let mealTargetMacros = isLastMeal
-      ? getMacrosDifference(dailyMacros, targetMacros)
-      : perMealMacros;
+    // Shuffle the sources for randomness
+    shuffleArray(sources);
 
-    mealTargetMacros = {
-      calories: Math.max(mealTargetMacros.calories, 0),
-      protein: Math.max(mealTargetMacros.protein, 0),
-      fat: Math.max(mealTargetMacros.fat, 0),
-      carbs: Math.max(mealTargetMacros.carbs, 0),
-    };
+    for (let mealNum = 0; mealNum < mealsPerDay; mealNum++) {
+      const isLastMeal = mealNum === mealsPerDay - 1;
+      let mealTargetMacros = isLastMeal
+        ? getMacrosDifference(dailyMacros, targetMacros)
+        : perMealMacros;
 
-    const source = sources[mealNum % sources.length];
-    const availableFoods = foodsBySource[source];
+      mealTargetMacros = {
+        calories: Math.max(mealTargetMacros.calories, 0),
+        protein: Math.max(mealTargetMacros.protein, 0),
+        fat: Math.max(mealTargetMacros.fat, 0),
+        carbs: Math.max(mealTargetMacros.carbs, 0),
+      };
 
-    const meal = generateMeal(mealTargetMacros, isLastMeal, usedFoods, availableFoods);
-    meals.push({ ...meal, source });
+      const source = sources[mealNum % sources.length];
+      const availableFoods = [...foodsBySource[source]];
 
-    dailyMacros.calories += meal.totalMacros.calories;
-    dailyMacros.protein += meal.totalMacros.protein;
-    dailyMacros.fat += meal.totalMacros.fat;
-    dailyMacros.carbs += meal.totalMacros.carbs;
+      // Shuffle available foods for randomness
+      shuffleArray(availableFoods);
+
+      // If all foods have been used, reset the usedFoods array
+      if (usedFoods.length >= totalAvailableFoods) {
+        usedFoods.length = 0;
+      }
+
+      const meal = generateMeal(mealTargetMacros, isLastMeal, usedFoods, availableFoods);
+      meals.push({ ...meal, source });
+
+      dailyMacros.calories += meal.totalMacros.calories;
+      dailyMacros.protein += meal.totalMacros.protein;
+      dailyMacros.fat += meal.totalMacros.fat;
+      dailyMacros.carbs += meal.totalMacros.carbs;
+    }
+
+    weekPlan.push({ meals, actualMacros: dailyMacros });
   }
 
-  return { meals, actualMacros: dailyMacros };
+  return weekPlan;
 };
 
 export default generateMealPlan;
