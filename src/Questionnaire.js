@@ -3,11 +3,10 @@ import {
   VStack, HStack, FormControl, FormLabel, Input, Select, Checkbox, CheckboxGroup,
   Radio, RadioGroup, Button, Slider, SliderTrack, SliderFilledTrack, SliderThumb,
   Box, SimpleGrid, useColorModeValue, Progress, Icon, Flex, Heading, Text,
-  FormErrorMessage, Container, Divider, Tooltip, VisuallyHidden,
+  FormErrorMessage, Container, Divider, Tooltip
 } from "@chakra-ui/react";
 import {
-  FaWeight, FaRulerVertical, FaVenusMars, FaRunning, FaAppleAlt, FaUtensils,
-  FaDumbbell, FaBalanceScale, FaStore, FaRocket, FaUser, FaChevronLeft, FaChevronRight,
+  FaRunning, FaAppleAlt, FaUtensils, FaDumbbell, FaUser
 } from 'react-icons/fa';
 
 const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {

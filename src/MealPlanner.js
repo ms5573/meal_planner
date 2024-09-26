@@ -5,7 +5,6 @@ import {
   VStack,
   HStack,
   Text,
-  Button,
   Heading,
   Table,
   Thead,
@@ -26,6 +25,7 @@ import {
   TabPanel,
   Grid,
   GridItem,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice } from 'react-icons/fa';
 import calculateMacros from './calculateMacros';
@@ -74,11 +74,10 @@ const MealPlanner = () => {
     avoidFoods: [],
     cuisinePreferences: [],
   });
-  const [mealPlan, setMealPlan] = useState(null);  // Initialize mealPlan as null
+  const [mealPlan, setMealPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showQuestionnaire, setShowQuestionnaire] = useState(true);
-  const [userPreferences, setUserPreferences] = useState(null);
 
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const cardBgColor = useColorModeValue("white", "gray.700");
@@ -87,9 +86,6 @@ const MealPlanner = () => {
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  const handleInputChange = (e) => {
-    setUserInput({ ...userInput, [e.target.name]: e.target.value });
-  };
 
   const calculatePercentage = (actual, target) => {
     return Math.round((actual / target) * 100);
@@ -137,7 +133,6 @@ const MealPlanner = () => {
         carbs: Math.round(targetMacros.carbs / mealsPerDay),
       };
 
-      // Generate the weekly meal plan
       const plan = generateMealPlan(
         targetMacros,
         perMealMacros,
@@ -157,7 +152,6 @@ const MealPlanner = () => {
   };
 
   const handleQuestionnaireSubmit = (preferences) => {
-    setUserPreferences(preferences);
     setUserInput({
       weight: preferences.weight,
       height: preferences.height,
@@ -194,122 +188,126 @@ const MealPlanner = () => {
             <>
               {error && <Text color="red.500">{error}</Text>}
 
-              {mealPlan && mealPlan.weekPlan && (
-                <SlideFade in={true} offsetY="20px">
-                  <Box borderWidth={1} borderRadius="lg" p={6} bg={cardBgColor} borderColor={borderColor} boxShadow="md">
-                    <Heading as="h2" size="lg" mb={4} color={headingColor}>Your Weekly Meal Plan</Heading>
+              {isLoading ? (
+                <Spinner size="xl" />
+              ) : (
+                mealPlan && mealPlan.weekPlan && (
+                  <SlideFade in={true} offsetY="20px">
+                    <Box borderWidth={1} borderRadius="lg" p={6} bg={cardBgColor} borderColor={borderColor} boxShadow="md">
+                      <Heading as="h2" size="lg" mb={4} color={headingColor}>Your Weekly Meal Plan</Heading>
 
-                    <Tabs isFitted variant="enclosed">
-                      <TabList mb="1em">
-                        {daysOfWeek.map((day, index) => (
-                          <Tab key={index}>{day}</Tab>
-                        ))}
-                      </TabList>
-                      <TabPanels>
-                        {mealPlan.weekPlan.map((dayPlan, dayIndex) => (
-                          <TabPanel key={dayIndex}>
-                            <VStack spacing={6} align="stretch">
-                              <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-                                {dayPlan.meals.map((meal, mealIndex) => (
-                                  <GridItem key={mealIndex}>
-                                    <Box
-                                      p={4}
-                                      borderRadius="md"
-                                      boxShadow="md"
-                                      borderWidth={1}
-                                      borderColor={borderColor}
-                                      _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
-                                      transition="all 0.2s"
-                                    >
-                                      <HStack spacing={4} align="center" mb={2}>
-                                        <RestaurantLogo source={meal.source} />
-                                        <Heading as="h3" size="md" color={headingColor}>
-                                          Meal {mealIndex + 1} - {meal.source}
-                                        </Heading>
-                                      </HStack>
-                                      <List spacing={3}>
-                                        {meal.foods.map((food, foodIndex) => (
-                                          <ListItem key={foodIndex} py={2} borderBottomWidth={1} borderColor={borderColor}>
-                                            <Text fontWeight="bold">
-                                              {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
-                                            </Text>
-                                            <Text fontSize="sm">
-                                              Serving Size: {food.isHalfPortion
-                                                ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
-                                                : `${food.servingSize}g`}
-                                            </Text>
-                                            <HStack spacing={4} mt={2}>
-                                              <HStack>
-                                                <MacroIcon type="calories" />
-                                                <Text fontSize="sm">{food.calories} kcal</Text>
+                      <Tabs isFitted variant="enclosed">
+                        <TabList mb="1em">
+                          {daysOfWeek.map((day, index) => (
+                            <Tab key={index}>{day}</Tab>
+                          ))}
+                        </TabList>
+                        <TabPanels>
+                          {mealPlan.weekPlan.map((dayPlan, dayIndex) => (
+                            <TabPanel key={dayIndex}>
+                              <VStack spacing={6} align="stretch">
+                                <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+                                  {dayPlan.meals.map((meal, mealIndex) => (
+                                    <GridItem key={mealIndex}>
+                                      <Box
+                                        p={4}
+                                        borderRadius="md"
+                                        boxShadow="md"
+                                        borderWidth={1}
+                                        borderColor={borderColor}
+                                        _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+                                        transition="all 0.2s"
+                                      >
+                                        <HStack spacing={4} align="center" mb={2}>
+                                          <RestaurantLogo source={meal.source} />
+                                          <Heading as="h3" size="md" color={headingColor}>
+                                            Meal {mealIndex + 1} - {meal.source}
+                                          </Heading>
+                                        </HStack>
+                                        <List spacing={3}>
+                                          {meal.foods.map((food, foodIndex) => (
+                                            <ListItem key={foodIndex} py={2} borderBottomWidth={1} borderColor={borderColor}>
+                                              <Text fontWeight="bold">
+                                                {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
+                                              </Text>
+                                              <Text fontSize="sm">
+                                                Serving Size: {food.isHalfPortion
+                                                  ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
+                                                  : `${food.servingSize}g`}
+                                              </Text>
+                                              <HStack spacing={4} mt={2}>
+                                                <HStack>
+                                                  <MacroIcon type="calories" />
+                                                  <Text fontSize="sm">{food.calories} kcal</Text>
+                                                </HStack>
+                                                <HStack>
+                                                  <MacroIcon type="protein" />
+                                                  <Text fontSize="sm">{food.protein}g</Text>
+                                                </HStack>
+                                                <HStack>
+                                                  <MacroIcon type="fat" />
+                                                  <Text fontSize="sm">{food.fat}g</Text>
+                                                </HStack>
+                                                <HStack>
+                                                  <MacroIcon type="carbs" />
+                                                  <Text fontSize="sm">{food.carbs}g</Text>
+                                                </HStack>
                                               </HStack>
-                                              <HStack>
-                                                <MacroIcon type="protein" />
-                                                <Text fontSize="sm">{food.protein}g</Text>
-                                              </HStack>
-                                              <HStack>
-                                                <MacroIcon type="fat" />
-                                                <Text fontSize="sm">{food.fat}g</Text>
-                                              </HStack>
-                                              <HStack>
-                                                <MacroIcon type="carbs" />
-                                                <Text fontSize="sm">{food.carbs}g</Text>
-                                              </HStack>
-                                            </HStack>
-                                          </ListItem>
-                                        ))}
-                                      </List>
-                                      <MealSummary totalMacros={meal.totalMacros} />
-                                    </Box>
-                                  </GridItem>
-                                ))}
-                              </Grid>
-                              <Box mt={4}>
-                                <Heading as="h4" size="md" mb={2}>Daily Macro Summary</Heading>
-                                <Table variant="simple" colorScheme="teal">
-                                  <Thead>
-                                    <Tr>
-                                      <Th>Macro</Th>
-                                      <Th>Target</Th>
-                                      <Th>Actual</Th>
-                                      <Th>Percentage</Th>
-                                    </Tr>
-                                  </Thead>
-                                  <Tbody>
-                                    {['calories', 'protein', 'fat', 'carbs'].map(macro => (
-                                      <Tr key={macro}>
-                                        <Td>
-                                          <HStack>
-                                            <MacroIcon type={macro} />
-                                            <Text>{macro.charAt(0).toUpperCase() + macro.slice(1)}</Text>
-                                          </HStack>
-                                        </Td>
-                                        <Td>{mealPlan.targetMacros[macro]}{macro !== 'calories' && 'g'}</Td>
-                                        <Td>{Math.round(dayPlan.actualMacros[macro])}{macro !== 'calories' && 'g'}</Td>
-                                        <Td>
-                                          <Progress
-                                            value={calculatePercentage(dayPlan.actualMacros[macro], mealPlan.targetMacros[macro])}
-                                            size="sm"
-                                            colorScheme={
-                                              macro === 'calories' ? 'red' :
-                                              macro === 'protein' ? 'green' :
-                                              macro === 'fat' ? 'yellow' : 'purple'
-                                            }
-                                            borderRadius="full"
-                                          />
-                                        </Td>
+                                            </ListItem>
+                                          ))}
+                                        </List>
+                                        <MealSummary totalMacros={meal.totalMacros} />
+                                      </Box>
+                                    </GridItem>
+                                  ))}
+                                </Grid>
+                                <Box mt={4}>
+                                  <Heading as="h4" size="md" mb={2}>Daily Macro Summary</Heading>
+                                  <Table variant="simple" colorScheme="teal">
+                                    <Thead>
+                                      <Tr>
+                                        <Th>Macro</Th>
+                                        <Th>Target</Th>
+                                        <Th>Actual</Th>
+                                        <Th>Percentage</Th>
                                       </Tr>
-                                    ))}
-                                  </Tbody>
-                                </Table>
-                              </Box>
-                            </VStack>
-                          </TabPanel>
-                        ))}
-                      </TabPanels>
-                    </Tabs>
-                  </Box>
-                </SlideFade>
+                                    </Thead>
+                                    <Tbody>
+                                      {['calories', 'protein', 'fat', 'carbs'].map(macro => (
+                                        <Tr key={macro}>
+                                          <Td>
+                                            <HStack>
+                                              <MacroIcon type={macro} />
+                                              <Text>{macro.charAt(0).toUpperCase() + macro.slice(1)}</Text>
+                                            </HStack>
+                                          </Td>
+                                          <Td>{mealPlan.targetMacros[macro]}{macro !== 'calories' && 'g'}</Td>
+                                          <Td>{Math.round(dayPlan.actualMacros[macro])}{macro !== 'calories' && 'g'}</Td>
+                                          <Td>
+                                            <Progress
+                                              value={calculatePercentage(dayPlan.actualMacros[macro], mealPlan.targetMacros[macro])}
+                                              size="sm"
+                                              colorScheme={
+                                                macro === 'calories' ? 'red' :
+                                                macro === 'protein' ? 'green' :
+                                                macro === 'fat' ? 'yellow' : 'purple'
+                                              }
+                                              borderRadius="full"
+                                            />
+                                          </Td>
+                                        </Tr>
+                                      ))}
+                                    </Tbody>
+                                  </Table>
+                                </Box>
+                              </VStack>
+                            </TabPanel>
+                          ))}
+                        </TabPanels>
+                      </Tabs>
+                    </Box>
+                  </SlideFade>
+                )
               )}
             </>
           )}

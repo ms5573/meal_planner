@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, keyframes, Tab, TabList, TabPanel, TabPanels, Tabs, Badge } from '@chakra-ui/react';
+import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Badge } from '@chakra-ui/react';
 import { FaUtensils, FaChartPie, FaAppleAlt, FaClipboardCheck, FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaClipboardList, FaCog, FaCalendarAlt } from 'react-icons/fa';
 import RestaurantLogo from './RestaurantLogo';
 
@@ -15,11 +15,11 @@ const Feature = ({ icon, title, text }) => {
   );
 };
 
-// Animation for logos or cards
-const bounceAnimation = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-`;
+
+// const bounceAnimation = keyframes`
+//   0%, 100% { transform: translateY(0); }
+//   50% { transform: translateY(-10px); }
+// `;
 
 // How It Works Step component
 const HowItWorksStep = ({ icon, title, description }) => {
