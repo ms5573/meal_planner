@@ -26,8 +26,16 @@ import {
   Grid,
   GridItem,
   Spinner,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  IconButton,
 } from "@chakra-ui/react";
-import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice } from 'react-icons/fa';
+import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaInfoCircle } from 'react-icons/fa';
 import calculateMacros from './calculateMacros';
 import generateMealPlan from './generateMealPlan';
 import MealSummary from './MealSummary';
@@ -226,31 +234,58 @@ const MealPlanner = () => {
                                         <List spacing={3}>
                                           {meal.foods.map((food, foodIndex) => (
                                             <ListItem key={foodIndex} py={2} borderBottomWidth={1} borderColor={borderColor}>
-                                              <Text fontWeight="bold">
-                                                {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
-                                              </Text>
-                                              <Text fontSize="sm">
-                                                Serving Size: {food.isHalfPortion
-                                                  ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
-                                                  : `${food.servingSize}g`}
-                                              </Text>
-                                              <HStack spacing={4} mt={2}>
-                                                <HStack>
-                                                  <MacroIcon type="calories" />
-                                                  <Text fontSize="sm">{food.calories} kcal</Text>
-                                                </HStack>
-                                                <HStack>
-                                                  <MacroIcon type="protein" />
-                                                  <Text fontSize="sm">{food.protein}g</Text>
-                                                </HStack>
-                                                <HStack>
-                                                  <MacroIcon type="fat" />
-                                                  <Text fontSize="sm">{food.fat}g</Text>
-                                                </HStack>
-                                                <HStack>
-                                                  <MacroIcon type="carbs" />
-                                                  <Text fontSize="sm">{food.carbs}g</Text>
-                                                </HStack>
+                                              <HStack justify="space-between" align="start">
+                                                <VStack align="start" spacing={1} flex={1}>
+                                                  <Text fontWeight="bold">
+                                                    {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
+                                                  </Text>
+                                                  <Text fontSize="sm">
+                                                    Serving Size: {food.isHalfPortion
+                                                      ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
+                                                      : `${food.servingSize}g`}
+                                                  </Text>
+                                                  <HStack spacing={4} mt={2}>
+                                                    <HStack>
+                                                      <MacroIcon type="calories" />
+                                                      <Text fontSize="sm">{food.calories} kcal</Text>
+                                                    </HStack>
+                                                    <HStack>
+                                                      <MacroIcon type="protein" />
+                                                      <Text fontSize="sm">{food.protein}g</Text>
+                                                    </HStack>
+                                                    <HStack>
+                                                      <MacroIcon type="fat" />
+                                                      <Text fontSize="sm">{food.fat}g</Text>
+                                                    </HStack>
+                                                    <HStack>
+                                                      <MacroIcon type="carbs" />
+                                                      <Text fontSize="sm">{food.carbs}g</Text>
+                                                    </HStack>
+                                                  </HStack>
+                                                </VStack>
+                                                <Popover>
+                                                  <PopoverTrigger>
+                                                    <IconButton
+                                                      icon={<FaInfoCircle />}
+                                                      size="sm"
+                                                      variant="ghost"
+                                                      colorScheme="teal"
+                                                      aria-label="View ingredients"
+                                                    />
+                                                  </PopoverTrigger>
+                                                  <PopoverContent bg={cardBgColor}>
+                                                    <PopoverArrow />
+                                                    <PopoverCloseButton />
+                                                    <PopoverHeader fontWeight="bold">Ingredients</PopoverHeader>
+                                                    <PopoverBody>
+                                                      <List>
+                                                        {food.ingredients.map((ingredient, idx) => (
+                                                          <ListItem key={idx}>{ingredient}</ListItem>
+                                                        ))}
+                                                      </List>
+                                                    </PopoverBody>
+                                                  </PopoverContent>
+                                                </Popover>
                                               </HStack>
                                             </ListItem>
                                           ))}

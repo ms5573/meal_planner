@@ -108,6 +108,147 @@ const combinedFoodDatabase = [
   // Add the rest of the Subway items here...
   
   // Chipotle items
+{
+    name: "High-Protein Burrito for Muscle Gain",
+    servingSize: 970, // approximate total weight in grams
+    calories: 1460,
+    fat: 67,
+    carbs: 129,
+    protein: 84,
+    source: "Custom Burrito",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: [
+      "Tortilla",
+      "Chicken",
+      "Steak",
+      "White Rice",
+      "Black Beans",
+      "Cheese",
+      "Sour Cream",
+      "Guacamole",
+      "Fajita Veggies"
+    ]
+  },
+  {
+    name: "Vegetarian Burrito for Weight Loss",
+    servingSize: 600, // approximate total weight in grams
+    calories: 520,
+    fat: 19,
+    carbs: 69,
+    protein: 17,
+    source: "Custom Burrito",
+    cuisine: "Mexican",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: [
+      "Tortilla",
+      "Sofritas",
+      "No Rice",
+      "No Beans",
+      "Fajita Veggies",
+      "Fresh Tomato Salsa",
+      "Romaine Lettuce"
+    ]
+  },
+  {
+    name: "Balanced Burrito for Maintenance",
+    servingSize: 800, // approximate total weight in grams
+    calories: 970,
+    fat: 32,
+    carbs: 115,
+    protein: 50,
+    source: "Custom Burrito",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: [
+      "Tortilla",
+      "Beef Barbacoa",
+      "Brown Rice",
+      "Pinto Beans",
+      "Cheese",
+      "Fresh Tomato Salsa",
+      "Romaine Lettuce"
+    ]
+  },
+  {
+    name: "Vegan Burrito",
+    servingSize: 850, // approximate total weight in grams
+    calories: 1140,
+    fat: 51,
+    carbs: 146,
+    protein: 34,
+    source: "Custom Burrito",
+    cuisine: "Mexican",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: [
+      "Tortilla",
+      "Sofritas",
+      "Brown Rice",
+      "Black Beans",
+      "Fajita Veggies",
+      "Roasted Chili-Corn Salsa",
+      "Guacamole"
+    ]
+  },
+  {
+    name: "Low-Carb Burrito Bowl for Weight Loss",
+    servingSize: 500, // approximate total weight in grams
+    calories: 335,
+    fat: 13,
+    carbs: 13,
+    protein: 54,
+    source: "Custom Burrito",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: true,
+    ingredients: [
+      "No Tortilla",
+      "Chicken",
+      "No Rice",
+      "No Beans",
+      "Fajita Veggies",
+      "Tomatillo-Red Chili Salsa",
+      "Romaine Lettuce",
+      "Extra Chicken"
+    ]
+  },
+  {
+    name: "Gluten-Free Burrito",
+    servingSize: 750, // approximate total weight in grams
+    calories: 1015,
+    fat: 59,
+    carbs: 90,
+    protein: 43,
+    source: "Custom Burrito",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true, // Assuming corn tortilla is used
+    isDairyFree: false,
+    ingredients: [
+      "Corn Tortilla",
+      "Carnitas",
+      "White Rice",
+      "Pinto Beans",
+      "Cheese",
+      "Tomatillo-Green Chili Salsa",
+      "Guacamole"
+    ]
+  },
   {
     name: "Chicken Burrito Bowl",
     servingSize: 510,
