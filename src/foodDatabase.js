@@ -819,7 +819,7 @@ const combinedFoodDatabase = [
     isDairyFree: true,
     ingredients: ["Chicken", "Lettuce", "Beans", "Salsa", "Guacamole"]
   },
-
+  // Just Salad
   {
     name: "Chicken Barbacoa Market Bowl",
     servingSize: 400,
@@ -863,7 +863,7 @@ const combinedFoodDatabase = [
     isVegan: false,
     isGlutenFree: true,
     isDairyFree: true,
-    ingredients: ["Zoodles", "Chicken", "Almonds", "Avocado", "Dressing"]
+    ingredients: ["Zucchini Noodles", "Chicken", "Almonds", "Avocado", "Dressing"]
   },
   {
     name: "Buffalo Chicken Wrap",
@@ -878,7 +878,7 @@ const combinedFoodDatabase = [
     isVegan: false,
     isGlutenFree: false,
     isDairyFree: false,
-    ingredients: ["Chicken", "Buffalo Sauce", "Tortilla", "Cheese", "Lettuce"]
+    ingredients: ["Chicken", "Buffalo Sauce", "Tortilla", "Cheddar Cheese", "Lettuce"]
   },
   {
     name: "Spicy Chicken Caesar Wrap",
@@ -893,7 +893,7 @@ const combinedFoodDatabase = [
     isVegan: false,
     isGlutenFree: false,
     isDairyFree: false,
-    ingredients: ["Chicken", "Caesar Dressing", "Tortilla", "Cheese", "Lettuce"]
+    ingredients: ["Chicken", "Caesar Dressing", "Tortilla", "Parmesan Cheese", "Lettuce"]
   },
   {
     name: "Avo Blast Toast",
@@ -908,7 +908,7 @@ const combinedFoodDatabase = [
     isVegan: true,
     isGlutenFree: false,
     isDairyFree: true,
-    ingredients: ["Avocado", "Bread", "Chili Flakes", "Olive Oil", "Salt"]
+    ingredients: ["Avocado", "Multigrain Bread", "Chili Flakes", "Olive Oil", "Salt"]
   },
   {
     name: "Peanut Butter Warrior Smoothie",
@@ -923,7 +923,297 @@ const combinedFoodDatabase = [
     isVegan: true,
     isGlutenFree: true,
     isDairyFree: true,
-    ingredients: ["Peanut Butter", "Banana", "Almond Milk", "Protein Powder"]
+    ingredients: ["Peanut Butter", "Banana", "Almond Milk", "Vegan Protein Powder"]
+  },
+
+  {
+    name: "Crispy Chicken Poblano Salad",
+    servingSize: null,
+    calories: 520,
+    fat: 27,
+    carbs: 51,
+    protein: 22,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Tokyo Supergreens Salad with Tofu",
+    servingSize: null,
+    calories: 350,
+    fat: 22,
+    carbs: 25,
+    protein: 20,
+    source: "Just Salad",
+    cuisine: "Asian Fusion",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: []
+  },
+  {
+    name: "Tokyo Supergreens Salad with Chicken",
+    servingSize: null,
+    calories: 400,
+    fat: 19,
+    carbs: 24,
+    protein: 37,
+    source: "Just Salad",
+    cuisine: "Asian Fusion",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: []
+  },
+  {
+    name: "Thai Chicken Crunch Salad",
+    servingSize: null,
+    calories: 290,
+    fat: 7,
+    carbs: 26,
+    protein: 29,
+    source: "Just Salad",
+    cuisine: "Thai",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: []
+  },
+
+  {
+    name: "Impossible™ Chipotle Cowboy Salad",
+    servingSize: null,
+    calories: 320,
+    fat: 17,
+    carbs: 35,
+    protein: 11,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Earth Bowl Salad",
+    servingSize: null,
+    calories: 380,
+    fat: 20,
+    carbs: 43,
+    protein: 8,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Earth Bowl Salad with Chicken",
+    servingSize: null,
+    calories: 510,
+    fat: 23,
+    carbs: 43,
+    protein: 33,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Buffalo Cauliflower Salad",
+    servingSize: null,
+    calories: 330,
+    fat: 22,
+    carbs: 24,
+    protein: 13,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+
+  {
+    name: "California Cobb Salad",
+    servingSize: null,
+    calories: 380,
+    fat: 21,
+    carbs: 14,
+    protein: 36,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: true,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Chicken Caesar Salad",
+    servingSize: null,
+    calories: 400,
+    fat: 16,
+    carbs: 27,
+    protein: 37,
+    source: "Just Salad",
+    cuisine: "Italian",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Buffalo Chicken Salad",
+    servingSize: null,
+    calories: 410,
+    fat: 25,
+    carbs: 20,
+    protein: 32,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+
+  {
+    name: "Edamame Crunch Bowl",
+    servingSize: null,
+    calories: 410,
+    fat: 22,
+    carbs: 40,
+    protein: 21,
+    source: "Just Salad",
+    cuisine: "Asian",
+    isVegetarian: true,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Chicken Fajita Bowl",
+    servingSize: null,
+    calories: 430,
+    fat: 23,
+    carbs: 35,
+    protein: 26,
+    source: "Just Salad",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Cilantro Lime Chicken Bowl",
+    servingSize: null,
+    calories: 590,
+    fat: 27,
+    carbs: 59,
+    protein: 34,
+    source: "Just Salad",
+    cuisine: "Mexican",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Warm Chicken & Goat Cheese Bowl",
+    servingSize: null,
+    calories: 470,
+    fat: 30,
+    carbs: 21,
+    protein: 33,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+
+  {
+    name: "Buffalo Chicken Wrap",
+    servingSize: null,
+    calories: 550,
+    fat: 35,
+    carbs: 49,
+    protein: 44,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Spicy Chicken Caesar Wrap",
+    servingSize: null,
+    calories: 560,
+    fat: 27,
+    carbs: 60,
+    protein: 51,
+    source: "Just Salad",
+    cuisine: "Italian",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Honey Crispy Chicken Wrap",
+    servingSize: null,
+    calories: 660,
+    fat: 34,
+    carbs: 85,
+    protein: 40,
+    source: "Just Salad",
+    cuisine: "American",
+    isVegetarian: false,
+    isVegan: false,
+    isGlutenFree: false,
+    isDairyFree: false,
+    ingredients: []
+  },
+  {
+    name: "Vegan Chipotle Wrap",
+    servingSize: null,
+    calories: 510,
+    fat: 27,
+    carbs: 75,
+    protein: 26,
+    source: "Just Salad",
+    cuisine: "Mexican",
+    isVegetarian: true,
+    isVegan: true,
+    isGlutenFree: false,
+    isDairyFree: true,
+    ingredients: []
   },
 
   // Panera Bread items

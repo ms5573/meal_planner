@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -34,13 +34,16 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   IconButton,
+  Button,
 } from "@chakra-ui/react";
-import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaInfoCircle } from 'react-icons/fa';
+import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaInfoCircle, FaFilePdf } from 'react-icons/fa';
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import calculateMacros from './calculateMacros';
 import generateMealPlan from './generateMealPlan';
 import MealSummary from './MealSummary';
 import RestaurantLogo from './RestaurantLogo';
 import Questionnaire from './Questionnaire';
+import MealPlanPDF from './MealPlanPDF';
 
 const MacroIcon = ({ type }) => {
   const iconColors = useColorModeValue(
@@ -86,6 +89,8 @@ const MealPlanner = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showQuestionnaire, setShowQuestionnaire] = useState(true);
+  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
+  const [pdfReady, setPdfReady] = useState(false);
 
   const bgColor = useColorModeValue("gray.50", "gray.800");
   const cardBgColor = useColorModeValue("white", "gray.700");
@@ -93,6 +98,12 @@ const MealPlanner = () => {
   const headingColor = useColorModeValue("teal.600", "teal.200");
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+  useEffect(() => {
+    if (mealPlan && mealPlan.weekPlan) {
+      setPdfReady(true);
+    }
+  }, [mealPlan]);
 
   const calculatePercentage = (actual, target) => {
     return Math.round((actual / target) * 100);
@@ -202,6 +213,38 @@ const MealPlanner = () => {
                   <SlideFade in={true} offsetY="20px">
                     <Box borderWidth={1} borderRadius="lg" p={6} bg={cardBgColor} borderColor={borderColor} boxShadow="md">
                       <Heading as="h2" size="lg" mb={4} color={headingColor}>Your Weekly Meal Plan</Heading>
+                      
+                      {pdfReady ? (
+                        <BlobProvider document={<MealPlanPDF mealPlan={mealPlan.weekPlan} targetMacros={mealPlan.targetMacros} />}>
+                          {({ blob, url, loading, error }) => (
+                            <Button
+                              leftIcon={<FaFilePdf />}
+                              colorScheme="teal"
+                              isLoading={loading}
+                              onClick={() => {
+                                if (url) {
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.download = 'meal-plan.pdf';
+                                  link.click();
+                                }
+                              }}
+                              mb={4}
+                            >
+                              Download PDF
+                            </Button>
+                          )}
+                        </BlobProvider>
+                      ) : (
+                        <Button
+                          leftIcon={<FaFilePdf />}
+                          colorScheme="teal"
+                          isDisabled
+                          mb={4}
+                        >
+                          Preparing PDF...
+                        </Button>
+                      )}
 
                       <Tabs isFitted variant="enclosed">
                         <TabList mb="1em">
