@@ -1546,6 +1546,23 @@ const combinedFoodDatabase = [
     isGlutenFree: true,
     isDairyFree: true,
     ingredients: ["Steel Cut Oats", "Strawberries", "Cinnamon Crunch Topping"]
+  },
+
+  //Protein Snack
+  {
+  name: "Transparent Labs 100% Grass-Fed Whey Protein Isolate",
+  servingSize: 32.7,
+  calories: 120,
+  fat: 0.5,
+  carbs: 1,
+  protein: 28,
+  source: "Transparent Labs",
+  cuisine: "Supplement",
+  isVegetarian: true,
+  isVegan: false,
+  isGlutenFree: true,
+  isDairyFree: false,
+  ingredients: ["Grass-Fed Whey Protein Isolate"]
   }
 
 ];
