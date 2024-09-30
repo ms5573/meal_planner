@@ -1,66 +1,63 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Badge } from '@chakra-ui/react';
+import { Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, useColorModeValue, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Badge, Button, Tooltip } from '@chakra-ui/react';
 import { FaUtensils, FaChartPie, FaAppleAlt, FaClipboardCheck, FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaClipboardList, FaCog, FaCalendarAlt, FaCheck } from 'react-icons/fa';
 import RestaurantLogo from './RestaurantLogo';
 
 // Feature component for displaying key features
-const Feature = ({ icon, title, text }) => {
-  return (
-    <VStack>
-      <Icon as={icon} w={10} h={10} color="teal.500" />
-      <Text fontWeight="bold" fontSize="xl">{title}</Text>
-      <Text textAlign="center">{text}</Text>
-    </VStack>
-  );
-};
+const Feature = ({ icon, title, text }) => (
+  <VStack>
+    <Icon as={icon} w={10} h={10} color="teal.500" />
+    <Text fontWeight="bold" fontSize="xl">{title}</Text>
+    <Text textAlign="center">{text}</Text>
+  </VStack>
+);
 
 // How It Works Step component
-const HowItWorksStep = ({ icon, title, description }) => {
-  return (
-    <VStack
-      align="start"
-      spacing={4}
-      p={6}
-      bg={useColorModeValue("white", "gray.700")}
-      borderRadius="lg"
-      boxShadow="md"
-      transition="all 0.3s"
-      _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
+const HowItWorksStep = ({ icon, title, description }) => (
+  <VStack
+    align="start"
+    spacing={4}
+    p={6}
+    bg={useColorModeValue("white", "gray.700")}
+    borderRadius="lg"
+    boxShadow="md"
+    transition="all 0.3s"
+    _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
+  >
+    <Flex
+      w={12}
+      h={12}
+      align="center"
+      justify="center"
+      borderRadius="full"
+      bg="teal.500"
+      color="white"
     >
-      <Flex
-        w={12}
-        h={12}
-        align="center"
-        justify="center"
-        borderRadius="full"
-        bg="teal.500"
-        color="white"
-      >
-        <Icon as={icon} w={6} h={6} />
-      </Flex>
-      <Heading size="md">{title}</Heading>
-      <Text>{description}</Text>
-    </VStack>
-  );
+      <Icon as={icon} w={6} h={6} />
+    </Flex>
+    <Heading size="md">{title}</Heading>
+    <Text>{description}</Text>
+  </VStack>
+);
+
+// MacroIcon component for displaying nutrition icons
+const MacroIcon = ({ type }) => {
+  switch (type) {
+    case 'calories': return <Icon as={FaFire} />;
+    case 'protein': return <Icon as={FaDrumstickBite} />;
+    case 'fat': return <Icon as={FaCheese} />;
+    case 'carbs': return <Icon as={FaBreadSlice} />;
+    default: return null;
+  }
 };
 
-// Meal Plan Preview Component
-const MealPlanPreview = () => {
+// MealCard component to display each meal
+const MealCard = ({ restaurant, meals, totals }) => {
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const bgColor = useColorModeValue("white", "gray.700");
 
-  const MacroIcon = ({ type }) => {
-    switch (type) {
-      case 'calories': return <Icon as={FaFire} />;
-      case 'protein': return <Icon as={FaDrumstickBite} />;
-      case 'fat': return <Icon as={FaCheese} />;
-      case 'carbs': return <Icon as={FaBreadSlice} />;
-      default: return null;
-    }
-  };
-
-  const MealCard = ({ restaurant, meals, totals }) => (
+  return (
     <Box borderWidth={1} borderRadius="lg" p={4} mb={4} borderColor={borderColor} bg={bgColor}>
       <HStack mb={2}>
         <RestaurantLogo source={restaurant} />
@@ -89,14 +86,40 @@ const MealPlanPreview = () => {
       </Box>
     </Box>
   );
+};
+
+// Meal Plan Preview Component
+const MealPlanPreview = () => {
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const bgColor = useColorModeValue("white", "gray.700");
+  const inactiveTabColor = useColorModeValue("gray.300", "gray.600");
+  const inactiveTabHoverColor = useColorModeValue("gray.400", "gray.500");
+
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   return (
     <Box borderWidth={1} borderRadius="lg" p={4} width="100%" maxWidth="800px" borderColor={borderColor} bg={bgColor}>
       <Heading size="lg" mb={4}>Your Weekly Meal Plan</Heading>
       <Tabs>
         <TabList>
-          {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-            <Tab key={day}>{day}</Tab>
+          {daysOfWeek.map((day, index) => (
+            <Tooltip key={day} label={index === 0 ? "Sample Day" : "Not available in sample"} placement="top">
+              <Tab
+                isDisabled={index !== 0}
+                _disabled={{ 
+                  color: inactiveTabColor, 
+                  cursor: "not-allowed",
+                  _hover: { color: inactiveTabHoverColor }
+                }}
+              >
+                {day}
+                {index === 0 && (
+                  <Badge ml={2} colorScheme="green" variant="solid" fontSize="xs">
+                    Sample
+                  </Badge>
+                )}
+              </Tab>
+            </Tooltip>
           ))}
         </TabList>
         <TabPanels>
@@ -127,7 +150,11 @@ const MealPlanPreview = () => {
               totals={{ calories: 1200, protein: 74, fat: 61, carbs: 87 }}
             />
           </TabPanel>
-          {/* Add similar TabPanels for other days of the week */}
+          {daysOfWeek.slice(1).map((day, index) => (
+            <TabPanel key={day}>
+              <Text color={inactiveTabColor}>Not available in sample preview</Text>
+            </TabPanel>
+          ))}
         </TabPanels>
       </Tabs>
     </Box>
@@ -249,7 +276,7 @@ const LandingPage = () => {
                   colorScheme="teal"
                   position="absolute"
                   top={4}
-                  right={4}  // Moved the badge to the right
+                  right={4}
                   zIndex={1}
                   fontSize="md"
                   px={3}
