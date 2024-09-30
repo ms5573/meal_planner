@@ -3,10 +3,10 @@ import {
   VStack, HStack, FormControl, FormLabel, Input, Select, Checkbox, CheckboxGroup,
   Radio, RadioGroup, Button, Slider, SliderTrack, SliderFilledTrack, SliderThumb,
   Box, SimpleGrid, useColorModeValue, Progress, Icon, Flex, Heading, Text,
-  FormErrorMessage, Container, Divider, Tooltip
+  FormErrorMessage, Container, Divider, Tooltip, Switch
 } from "@chakra-ui/react";
 import {
-  FaRunning, FaAppleAlt, FaUtensils, FaDumbbell, FaUser
+  FaRunning, FaAppleAlt, FaUtensils, FaDumbbell, FaUser, FaExchangeAlt
 } from 'react-icons/fa';
 
 const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
@@ -26,6 +26,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState({});
+  const [useMetric, setUseMetric] = useState(true);
 
   const handleInputChange = useCallback((name, value) => {
     setPreferences(prev => ({ ...prev, [name]: value }));
@@ -49,6 +50,27 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
     }
   }, []);
 
+  const convertWeight = useCallback((value, toMetric) => {
+    if (!value) return '';
+    const numValue = parseFloat(value);
+    return toMetric ? (numValue * 0.453592).toFixed(1) : (numValue * 2.20462).toFixed(1);
+  }, []);
+
+  const convertHeight = useCallback((value, toMetric) => {
+    if (!value) return '';
+    const numValue = parseFloat(value);
+    return toMetric ? (numValue * 2.54).toFixed(1) : (numValue / 2.54).toFixed(1);
+  }, []);
+
+  const handleUnitChange = useCallback((newUseMetric) => {
+    setUseMetric(newUseMetric);
+    setPreferences(prev => ({
+      ...prev,
+      weight: convertWeight(prev.weight, newUseMetric),
+      height: convertHeight(prev.height, newUseMetric),
+    }));
+  }, [convertWeight, convertHeight]);
+
   const steps = useMemo(() => [
     {
       title: "Personal Information",
@@ -56,14 +78,14 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
       fields: [
         {
           name: "weight",
-          label: "Weight (kg)",
+          label: useMetric ? "Weight (kg)" : "Weight (lbs)",
           component: ({ value, onChange, error }) => (
             <FormControl isRequired isInvalid={!!error}>
-              <FormLabel>Weight (kg)</FormLabel>
+              <FormLabel>{useMetric ? "Weight (kg)" : "Weight (lbs)"}</FormLabel>
               <Input
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="Enter weight"
+                placeholder={`Enter weight in ${useMetric ? 'kg' : 'lbs'}`}
                 type="number"
               />
               <FormErrorMessage>{error}</FormErrorMessage>
@@ -72,14 +94,14 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
         },
         {
           name: "height",
-          label: "Height (cm)",
+          label: useMetric ? "Height (cm)" : "Height (inches)",
           component: ({ value, onChange, error }) => (
             <FormControl isRequired isInvalid={!!error}>
-              <FormLabel>Height (cm)</FormLabel>
+              <FormLabel>{useMetric ? "Height (cm)" : "Height (inches)"}</FormLabel>
               <Input
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="Enter height"
+                placeholder={`Enter height in ${useMetric ? 'cm' : 'inches'}`}
                 type="number"
               />
               <FormErrorMessage>{error}</FormErrorMessage>
@@ -274,7 +296,7 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
         },
       ],
     },
-  ], [foodSources]);
+  ], [useMetric, foodSources]);
 
   const handleSubmit = useCallback(() => {
     const allErrors = {};
@@ -333,9 +355,22 @@ const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
             borderColor={borderColor}
           >
             <VStack spacing={6} align="stretch">
-              <HStack spacing={4} align="center">
-                <Icon as={steps[currentStep].icon} boxSize={8} color={iconColor} />
-                <Heading size="lg">{steps[currentStep].title}</Heading>
+              <HStack spacing={4} align="center" justify="space-between">
+                <HStack spacing={4} align="center">
+                  <Icon as={steps[currentStep].icon} boxSize={8} color={iconColor} />
+                  <Heading size="lg">{steps[currentStep].title}</Heading>
+                </HStack>
+                {currentStep === 0 && (
+                  <HStack spacing={2}>
+                    <Text fontSize="sm">US</Text>
+                    <Switch
+                      isChecked={useMetric}
+                      onChange={(e) => handleUnitChange(e.target.checked)}
+                      colorScheme="teal"
+                    />
+                    <Text fontSize="sm">Metric</Text>
+                  </HStack>
+                )}
               </HStack>
 
               <Divider />

@@ -1550,7 +1550,7 @@ const combinedFoodDatabase = [
 
   //Protein Snack
   {
-  name: "Transparent Labs 100% Grass-Fed Whey Protein Isolate",
+  name: "Protein Shake: Transparent Labs Whey Protein Isolate",
   servingSize: 32.7,
   calories: 120,
   fat: 0.5,

@@ -35,6 +35,7 @@ import {
   PopoverCloseButton,
   IconButton,
   Button,
+  Badge,
 } from "@chakra-ui/react";
 import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaInfoCircle, FaFilePdf } from 'react-icons/fa';
 import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
@@ -216,24 +217,30 @@ const MealPlanner = () => {
                       
                       {pdfReady ? (
                         <BlobProvider document={<MealPlanPDF mealPlan={mealPlan.weekPlan} targetMacros={mealPlan.targetMacros} />}>
-                          {({ blob, url, loading, error }) => (
-                            <Button
-                              leftIcon={<FaFilePdf />}
-                              colorScheme="teal"
-                              isLoading={loading}
-                              onClick={() => {
-                                if (url) {
-                                  const link = document.createElement('a');
-                                  link.href = url;
-                                  link.download = 'meal-plan.pdf';
-                                  link.click();
-                                }
-                              }}
-                              mb={4}
-                            >
-                              Download PDF
-                            </Button>
-                          )}
+                          {({ blob, url, loading, error }) => {
+                            if (error) {
+                              console.error('Error generating PDF:', error);
+                              return <Text color="red.500">Error generating PDF. Please try again.</Text>;
+                            }
+                            return (
+                              <Button
+                                leftIcon={<FaFilePdf />}
+                                colorScheme="teal"
+                                isLoading={loading}
+                                onClick={() => {
+                                  if (url) {
+                                    const link = document.createElement('a');
+                                    link.href = url;
+                                    link.download = 'meal-plan.pdf';
+                                    link.click();
+                                  }
+                                }}
+                                mb={4}
+                              >
+                                Download PDF
+                              </Button>
+                            );
+                          }}
                         </BlobProvider>
                       ) : (
                         <Button
@@ -271,8 +278,11 @@ const MealPlanner = () => {
                                         <HStack spacing={4} align="center" mb={2}>
                                           <RestaurantLogo source={meal.source} />
                                           <Heading as="h3" size="md" color={headingColor}>
-                                            Meal {mealIndex + 1} - {meal.source}
+                                            {meal.isSnack ? "Snack" : `Meal ${mealIndex + 1}`} - {meal.source}
                                           </Heading>
+                                          {meal.isSnack && (
+                                            <Badge colorScheme="blue">Protein Boost</Badge>
+                                          )}
                                         </HStack>
                                         <List spacing={3}>
                                           {meal.foods.map((food, foodIndex) => (
@@ -306,29 +316,31 @@ const MealPlanner = () => {
                                                     </HStack>
                                                   </HStack>
                                                 </VStack>
-                                                <Popover>
-                                                  <PopoverTrigger>
-                                                    <IconButton
-                                                      icon={<FaInfoCircle />}
-                                                      size="sm"
-                                                      variant="ghost"
-                                                      colorScheme="teal"
-                                                      aria-label="View ingredients"
-                                                    />
-                                                  </PopoverTrigger>
-                                                  <PopoverContent bg={cardBgColor}>
-                                                    <PopoverArrow />
-                                                    <PopoverCloseButton />
-                                                    <PopoverHeader fontWeight="bold">Ingredients</PopoverHeader>
-                                                    <PopoverBody>
-                                                      <List>
-                                                        {food.ingredients.map((ingredient, idx) => (
-                                                          <ListItem key={idx}>{ingredient}</ListItem>
-                                                        ))}
-                                                      </List>
-                                                    </PopoverBody>
-                                                  </PopoverContent>
-                                                </Popover>
+                                                {!meal.isSnack && (
+                                                  <Popover>
+                                                    <PopoverTrigger>
+                                                      <IconButton
+                                                        icon={<FaInfoCircle />}
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        colorScheme="teal"
+                                                        aria-label="View ingredients"
+                                                      />
+                                                    </PopoverTrigger>
+                                                    <PopoverContent bg={cardBgColor}>
+                                                      <PopoverArrow />
+                                                      <PopoverCloseButton />
+                                                      <PopoverHeader fontWeight="bold">Ingredients</PopoverHeader>
+                                                      <PopoverBody>
+                                                        <List>
+                                                          {food.ingredients.map((ingredient, idx) => (
+                                                            <ListItem key={idx}>{ingredient}</ListItem>
+                                                          ))}
+                                                        </List>
+                                                      </PopoverBody>
+                                                    </PopoverContent>
+                                                  </Popover>
+                                                )}
                                               </HStack>
                                             </ListItem>
                                           ))}
