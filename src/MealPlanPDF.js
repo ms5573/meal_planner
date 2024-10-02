@@ -2,6 +2,11 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 
+// Utility function to round numbers to one decimal place
+const roundToOneDecimal = (num) => {
+  return Number(num.toFixed(1));
+};
+
 // Define styles
 const styles = StyleSheet.create({
   page: {
@@ -13,7 +18,7 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 20,
     textAlign: 'center',
-    borderBottom: '2 solid #2C3E50',
+    borderBottom: '1 solid #2C3E50',
     paddingBottom: 10,
   },
   title: {
@@ -22,12 +27,12 @@ const styles = StyleSheet.create({
     color: '#2C3E50',
   },
   subtitle: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#7F8C8D',
     marginTop: 5,
   },
   dayTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 15,
     color: '#2980B9',
@@ -35,39 +40,44 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   mealContainer: {
-    marginBottom: 20,
-    borderRadius: 5,
-    padding: 10,
+    marginBottom: 15,
+    borderRadius: 3,
+    padding: 8,
     backgroundColor: '#ECF0F1',
   },
   mealTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
     color: '#16A085',
   },
   foodItem: {
-    fontSize: 10,
-    marginBottom: 5,
+    fontSize: 9,
+    marginBottom: 3,
     color: '#34495E',
   },
   macroSummary: {
-    marginTop: 10,
-    fontSize: 10,
+    marginTop: 8,
+    fontSize: 9,
     color: '#7F8C8D',
     fontWeight: 'bold',
   },
   dayTotals: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#2C3E50',
-    color: '#FFFFFF',
-    borderRadius: 5,
+    marginTop: 15,
+    padding: 8,
+    backgroundColor: '#F8F9FA',
+    borderRadius: 3,
+    borderLeft: '3 solid #2C3E50',
   },
   dayTotalsTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 3,
+    color: '#2C3E50',
+  },
+  dayTotalsContent: {
+    fontSize: 9,
+    color: '#34495E',
   },
   footer: {
     position: 'absolute',
@@ -83,12 +93,12 @@ const styles = StyleSheet.create({
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   logo: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
+    width: 15,
+    height: 15,
+    marginRight: 8,
   },
 });
 
@@ -106,7 +116,7 @@ const MealPlanPDF = ({ mealPlan, targetMacros }) => (
       <Page key={dayIndex} size="A4" style={styles.page}>
         {dayIndex === 0 && (
           <View style={styles.header}>
-            <Text style={styles.title}>Your Personalized Meal Plan</Text>
+            <Text style={styles.title}>Your FuelMate Meal Plan</Text>
             <Text style={styles.subtitle}>Generated on {format(new Date(), 'MMMM d, yyyy')}</Text>
           </View>
         )}
@@ -130,24 +140,24 @@ const MealPlanPDF = ({ mealPlan, targetMacros }) => (
               </Text>
             ))}
             <Text style={styles.macroSummary}>
-              Meal Totals: {meal.totalMacros.calories} kcal, 
-              P: {meal.totalMacros.protein}g, 
-              F: {meal.totalMacros.fat}g, 
-              C: {meal.totalMacros.carbs}g
+              Meal Totals: {roundToOneDecimal(meal.totalMacros.calories)} kcal, 
+              P: {roundToOneDecimal(meal.totalMacros.protein)}g, 
+              F: {roundToOneDecimal(meal.totalMacros.fat)}g, 
+              C: {roundToOneDecimal(meal.totalMacros.carbs)}g
             </Text>
           </View>
         ))}
         <View style={styles.dayTotals}>
           <Text style={styles.dayTotalsTitle}>Day Totals</Text>
-          <Text>
-            Calories: {day.actualMacros.calories} kcal, 
-            Protein: {day.actualMacros.protein}g, 
-            Fat: {day.actualMacros.fat}g, 
-            Carbs: {day.actualMacros.carbs}g
+          <Text style={styles.dayTotalsContent}>
+            Calories: {roundToOneDecimal(day.actualMacros.calories)} kcal | 
+            Protein: {roundToOneDecimal(day.actualMacros.protein)}g | 
+            Fat: {roundToOneDecimal(day.actualMacros.fat)}g | 
+            Carbs: {roundToOneDecimal(day.actualMacros.carbs)}g
           </Text>
         </View>
         <View style={styles.footer}>
-          <Text>© {new Date().getFullYear()} Your Company Name. All rights reserved.</Text>
+          <Text>© {new Date().getFullYear()} FuelMate. All rights reserved.</Text>
         </View>
       </Page>
     ))}
