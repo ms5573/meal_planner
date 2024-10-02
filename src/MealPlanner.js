@@ -38,7 +38,7 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaInfoCircle, FaFilePdf } from 'react-icons/fa';
-import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
+import { BlobProvider } from '@react-pdf/renderer';
 import calculateMacros from './calculateMacros';
 import generateMealPlan from './generateMealPlan';
 import MealSummary from './MealSummary';
@@ -90,7 +90,6 @@ const MealPlanner = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showQuestionnaire, setShowQuestionnaire] = useState(true);
-  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
   const [pdfReady, setPdfReady] = useState(false);
 
   const bgColor = useColorModeValue("gray.50", "gray.800");

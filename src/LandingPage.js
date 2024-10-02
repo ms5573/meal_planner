@@ -1,19 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Heading, Text, VStack, HStack, SimpleGrid, Icon, Flex, Button, useColorModeValue } from '@chakra-ui/react';
-import { FaUtensils, FaChartPie, FaAppleAlt, FaClipboardCheck, FaCheck, FaClipboardList, FaCog, FaCalendarAlt } from 'react-icons/fa';
+import { FaCheck, FaClipboardList, FaCog, FaCalendarAlt } from 'react-icons/fa';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase';
-import RestaurantLogo from './RestaurantLogo';
-
-// Feature component for displaying key features
-const Feature = ({ icon, title, text }) => (
-  <VStack>
-    <Icon as={icon} w={10} h={10} color="teal.500" />
-    <Text fontWeight="bold" fontSize="xl">{title}</Text>
-    <Text textAlign="center">{text}</Text>
-  </VStack>
-);
 
 // How It Works Step component
 const HowItWorksStep = ({ icon, title, description }) => (

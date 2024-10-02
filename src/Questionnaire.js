@@ -6,7 +6,7 @@ import {
   FormErrorMessage, Container, Divider, Tooltip, Switch
 } from "@chakra-ui/react";
 import {
-  FaRunning, FaAppleAlt, FaUtensils, FaDumbbell, FaUser, FaExchangeAlt
+  FaRunning, FaAppleAlt, FaUtensils, FaDumbbell, FaUser
 } from 'react-icons/fa';
 
 const Questionnaire = ({ onGenerateMealPlan, foodSources }) => {
