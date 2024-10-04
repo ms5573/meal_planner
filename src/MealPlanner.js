@@ -36,6 +36,12 @@ import {
   IconButton,
   Button,
   Badge,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { FaFire, FaDrumstickBite, FaCheese, FaBreadSlice, FaInfoCircle, FaFilePdf } from 'react-icons/fa';
 import { BlobProvider } from '@react-pdf/renderer';
@@ -190,6 +196,134 @@ const MealPlanner = () => {
 
   const foodSources = ['Chipotle', 'Subway', 'Just Salad', 'Panera Bread', 'Cava'];
 
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const MealCard = ({ meal, mealIndex }) => (
+    <Box
+      p={4}
+      borderRadius="md"
+      boxShadow="md"
+      borderWidth={1}
+      borderColor={borderColor}
+      _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
+      transition="all 0.2s"
+    >
+      <HStack spacing={4} align="center" mb={2}>
+        <RestaurantLogo source={meal.source} />
+        <Heading as="h3" size="md" color={headingColor}>
+          {meal.isSnack ? "Snack" : `Meal ${mealIndex + 1}`} - {meal.source}
+        </Heading>
+        {meal.isSnack && (
+          <Badge colorScheme="blue">Protein Boost</Badge>
+        )}
+      </HStack>
+      <List spacing={3}>
+        {meal.foods.map((food, foodIndex) => (
+          <ListItem key={foodIndex} py={2} borderBottomWidth={1} borderColor={borderColor}>
+            <HStack justify="space-between" align="start">
+              <VStack align="start" spacing={1} flex={1}>
+                <Text fontWeight="bold">
+                  {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
+                </Text>
+                <Text fontSize="sm">
+                  Serving Size: {food.isHalfPortion
+                    ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
+                    : `${food.servingSize}g`}
+                </Text>
+                <HStack spacing={4} mt={2} flexWrap="wrap">
+                  <HStack>
+                    <MacroIcon type="calories" />
+                    <Text fontSize="sm">{food.calories} kcal</Text>
+                  </HStack>
+                  <HStack>
+                    <MacroIcon type="protein" />
+                    <Text fontSize="sm">{food.protein}g</Text>
+                  </HStack>
+                  <HStack>
+                    <MacroIcon type="fat" />
+                    <Text fontSize="sm">{food.fat}g</Text>
+                  </HStack>
+                  <HStack>
+                    <MacroIcon type="carbs" />
+                    <Text fontSize="sm">{food.carbs}g</Text>
+                  </HStack>
+                </HStack>
+              </VStack>
+              {!meal.isSnack && (
+                <Popover>
+                  <PopoverTrigger>
+                    <IconButton
+                      icon={<FaInfoCircle />}
+                      size="sm"
+                      variant="ghost"
+                      colorScheme="teal"
+                      aria-label="View ingredients"
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent bg={cardBgColor}>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader fontWeight="bold">Ingredients</PopoverHeader>
+                    <PopoverBody>
+                      <List>
+                        {food.ingredients.map((ingredient, idx) => (
+                          <ListItem key={idx}>{ingredient}</ListItem>
+                        ))}
+                      </List>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              )}
+            </HStack>
+          </ListItem>
+        ))}
+      </List>
+      <MealSummary totalMacros={meal.totalMacros} />
+    </Box>
+  );
+
+  const DailyMacroSummary = ({ dayPlan }) => (
+    <Box mt={4}>
+      <Heading as="h4" size="md" mb={2}>Daily Macro Summary</Heading>
+      <Table variant="simple" colorScheme="teal">
+        <Thead>
+          <Tr>
+            <Th>Macro</Th>
+            <Th>Target</Th>
+            <Th>Actual</Th>
+            <Th>Percentage</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {['calories', 'protein', 'fat', 'carbs'].map(macro => (
+            <Tr key={macro}>
+              <Td>
+                <HStack>
+                  <MacroIcon type={macro} />
+                  <Text>{macro.charAt(0).toUpperCase() + macro.slice(1)}</Text>
+                </HStack>
+              </Td>
+              <Td>{mealPlan.targetMacros[macro]}{macro !== 'calories' && 'g'}</Td>
+              <Td>{Math.round(dayPlan.actualMacros[macro])}{macro !== 'calories' && 'g'}</Td>
+              <Td>
+                <Progress
+                  value={calculatePercentage(dayPlan.actualMacros[macro], mealPlan.targetMacros[macro])}
+                  size="sm"
+                  colorScheme={
+                    macro === 'calories' ? 'red' :
+                    macro === 'protein' ? 'green' :
+                    macro === 'fat' ? 'yellow' : 'purple'
+                  }
+                  borderRadius="full"
+                />
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </Box>
+  );
+
   return (
     <ChakraProvider>
       <Box maxWidth="1200px" margin="auto" padding="20px" bg={bgColor} minHeight="100vh">
@@ -214,185 +348,78 @@ const MealPlanner = () => {
                     <Box borderWidth={1} borderRadius="lg" p={6} bg={cardBgColor} borderColor={borderColor} boxShadow="md">
                       <Heading as="h2" size="lg" mb={4} color={headingColor}>Your Weekly Meal Plan</Heading>
                       
-                      {pdfReady ? (
+                      {pdfReady && (
                         <BlobProvider document={<MealPlanPDF mealPlan={mealPlan.weekPlan} targetMacros={mealPlan.targetMacros} />}>
-                          {({ blob, url, loading, error }) => {
-                            if (error) {
-                              console.error('Error generating PDF:', error);
-                              return <Text color="red.500">Error generating PDF. Please try again.</Text>;
-                            }
-                            return (
-                              <Button
-                                leftIcon={<FaFilePdf />}
-                                colorScheme="teal"
-                                isLoading={loading}
-                                onClick={() => {
-                                  if (url) {
-                                    const link = document.createElement('a');
-                                    link.href = url;
-                                    link.download = 'meal-plan.pdf';
-                                    link.click();
-                                  }
-                                }}
-                                mb={4}
-                              >
-                                Download PDF
-                              </Button>
-                            );
-                          }}
+                          {({ blob, url, loading, error }) => (
+                            <Button
+                              leftIcon={<FaFilePdf />}
+                              colorScheme="teal"
+                              isLoading={loading}
+                              onClick={() => {
+                                if (url) {
+                                  const link = document.createElement('a');
+                                  link.href = url;
+                                  link.download = 'meal-plan.pdf';
+                                  link.click();
+                                }
+                              }}
+                              mb={4}
+                              isFullWidth={isMobile}
+                            >
+                              Download PDF
+                            </Button>
+                          )}
                         </BlobProvider>
-                      ) : (
-                        <Button
-                          leftIcon={<FaFilePdf />}
-                          colorScheme="teal"
-                          isDisabled
-                          mb={4}
-                        >
-                          Preparing PDF...
-                        </Button>
                       )}
 
-                      <Tabs isFitted variant="enclosed">
-                        <TabList mb="1em">
-                          {daysOfWeek.map((day, index) => (
-                            <Tab key={index}>{day}</Tab>
-                          ))}
-                        </TabList>
-                        <TabPanels>
+                      {isMobile ? (
+                        <Accordion allowMultiple>
                           {mealPlan.weekPlan.map((dayPlan, dayIndex) => (
-                            <TabPanel key={dayIndex}>
-                              <VStack spacing={6} align="stretch">
-                                <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+                            <AccordionItem key={dayIndex}>
+                              <h2>
+                                <AccordionButton>
+                                  <Box flex="1" textAlign="left">
+                                    {daysOfWeek[dayIndex]}
+                                  </Box>
+                                  <AccordionIcon />
+                                </AccordionButton>
+                              </h2>
+                              <AccordionPanel pb={4}>
+                                <VStack spacing={4}>
                                   {dayPlan.meals.map((meal, mealIndex) => (
-                                    <GridItem key={mealIndex}>
-                                      <Box
-                                        p={4}
-                                        borderRadius="md"
-                                        boxShadow="md"
-                                        borderWidth={1}
-                                        borderColor={borderColor}
-                                        _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }}
-                                        transition="all 0.2s"
-                                      >
-                                        <HStack spacing={4} align="center" mb={2}>
-                                          <RestaurantLogo source={meal.source} />
-                                          <Heading as="h3" size="md" color={headingColor}>
-                                            {meal.isSnack ? "Snack" : `Meal ${mealIndex + 1}`} - {meal.source}
-                                          </Heading>
-                                          {meal.isSnack && (
-                                            <Badge colorScheme="blue">Protein Boost</Badge>
-                                          )}
-                                        </HStack>
-                                        <List spacing={3}>
-                                          {meal.foods.map((food, foodIndex) => (
-                                            <ListItem key={foodIndex} py={2} borderBottomWidth={1} borderColor={borderColor}>
-                                              <HStack justify="space-between" align="start">
-                                                <VStack align="start" spacing={1} flex={1}>
-                                                  <Text fontWeight="bold">
-                                                    {food.name} {food.isHalfPortion ? '(Half Portion)' : ''}
-                                                  </Text>
-                                                  <Text fontSize="sm">
-                                                    Serving Size: {food.isHalfPortion
-                                                      ? `${food.servingSize}g (Half of ${food.originalServingSize}g)`
-                                                      : `${food.servingSize}g`}
-                                                  </Text>
-                                                  <HStack spacing={4} mt={2}>
-                                                    <HStack>
-                                                      <MacroIcon type="calories" />
-                                                      <Text fontSize="sm">{food.calories} kcal</Text>
-                                                    </HStack>
-                                                    <HStack>
-                                                      <MacroIcon type="protein" />
-                                                      <Text fontSize="sm">{food.protein}g</Text>
-                                                    </HStack>
-                                                    <HStack>
-                                                      <MacroIcon type="fat" />
-                                                      <Text fontSize="sm">{food.fat}g</Text>
-                                                    </HStack>
-                                                    <HStack>
-                                                      <MacroIcon type="carbs" />
-                                                      <Text fontSize="sm">{food.carbs}g</Text>
-                                                    </HStack>
-                                                  </HStack>
-                                                </VStack>
-                                                {!meal.isSnack && (
-                                                  <Popover>
-                                                    <PopoverTrigger>
-                                                      <IconButton
-                                                        icon={<FaInfoCircle />}
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        colorScheme="teal"
-                                                        aria-label="View ingredients"
-                                                      />
-                                                    </PopoverTrigger>
-                                                    <PopoverContent bg={cardBgColor}>
-                                                      <PopoverArrow />
-                                                      <PopoverCloseButton />
-                                                      <PopoverHeader fontWeight="bold">Ingredients</PopoverHeader>
-                                                      <PopoverBody>
-                                                        <List>
-                                                          {food.ingredients.map((ingredient, idx) => (
-                                                            <ListItem key={idx}>{ingredient}</ListItem>
-                                                          ))}
-                                                        </List>
-                                                      </PopoverBody>
-                                                    </PopoverContent>
-                                                  </Popover>
-                                                )}
-                                              </HStack>
-                                            </ListItem>
-                                          ))}
-                                        </List>
-                                        <MealSummary totalMacros={meal.totalMacros} />
-                                      </Box>
-                                    </GridItem>
+                                    <MealCard key={mealIndex} meal={meal} mealIndex={mealIndex} />
                                   ))}
-                                </Grid>
-                                <Box mt={4}>
-                                  <Heading as="h4" size="md" mb={2}>Daily Macro Summary</Heading>
-                                  <Table variant="simple" colorScheme="teal">
-                                    <Thead>
-                                      <Tr>
-                                        <Th>Macro</Th>
-                                        <Th>Target</Th>
-                                        <Th>Actual</Th>
-                                        <Th>Percentage</Th>
-                                      </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                      {['calories', 'protein', 'fat', 'carbs'].map(macro => (
-                                        <Tr key={macro}>
-                                          <Td>
-                                            <HStack>
-                                              <MacroIcon type={macro} />
-                                              <Text>{macro.charAt(0).toUpperCase() + macro.slice(1)}</Text>
-                                            </HStack>
-                                          </Td>
-                                          <Td>{mealPlan.targetMacros[macro]}{macro !== 'calories' && 'g'}</Td>
-                                          <Td>{Math.round(dayPlan.actualMacros[macro])}{macro !== 'calories' && 'g'}</Td>
-                                          <Td>
-                                            <Progress
-                                              value={calculatePercentage(dayPlan.actualMacros[macro], mealPlan.targetMacros[macro])}
-                                              size="sm"
-                                              colorScheme={
-                                                macro === 'calories' ? 'red' :
-                                                macro === 'protein' ? 'green' :
-                                                macro === 'fat' ? 'yellow' : 'purple'
-                                              }
-                                              borderRadius="full"
-                                            />
-                                          </Td>
-                                        </Tr>
-                                      ))}
-                                    </Tbody>
-                                  </Table>
-                                </Box>
-                              </VStack>
-                            </TabPanel>
+                                  <DailyMacroSummary dayPlan={dayPlan} />
+                                </VStack>
+                              </AccordionPanel>
+                            </AccordionItem>
                           ))}
-                        </TabPanels>
-                      </Tabs>
+                        </Accordion>
+                      ) : (
+                        <Tabs isFitted variant="enclosed">
+                          <TabList mb="1em">
+                            {daysOfWeek.map((day, index) => (
+                              <Tab key={index}>{day}</Tab>
+                            ))}
+                          </TabList>
+                          <TabPanels>
+                            {mealPlan.weekPlan.map((dayPlan, dayIndex) => (
+                              <TabPanel key={dayIndex}>
+                                <VStack spacing={6} align="stretch">
+                                  <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+                                    {dayPlan.meals.map((meal, mealIndex) => (
+                                      <GridItem key={mealIndex}>
+                                        <MealCard meal={meal} mealIndex={mealIndex} />
+                                      </GridItem>
+                                    ))}
+                                  </Grid>
+                                  <DailyMacroSummary dayPlan={dayPlan} />
+                                </VStack>
+                              </TabPanel>
+                            ))}
+                          </TabPanels>
+                        </Tabs>
+                      )}
                     </Box>
                   </SlideFade>
                 )
